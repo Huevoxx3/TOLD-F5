@@ -1,0 +1,850 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #17202a;
+    background: #eef1f4;
+}
+
+body {
+    margin: 0;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.topbar {
+
+    background: #17202a;
+
+    color: white;
+
+    padding: 18px 24px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.topbar h1 {
+
+    margin: 0 0 4px;
+
+    font-size: 24px;
+}
+
+.topbar p {
+
+    margin: 0;
+
+    opacity: .75;
+}
+
+.badge {
+
+    border: 1px solid rgba(255,255,255,.3);
+
+    border-radius: 999px;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   CONTENEDOR
+========================= */
+
+.container {
+
+    max-width: 1100px;
+
+    margin: 24px auto;
+
+    padding: 0 16px 40px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+
+    background: white;
+
+    border:
+        1px solid #d7dce1;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    margin-bottom: 16px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.04);
+}
+
+h2 {
+
+    margin: 0 0 16px;
+
+    font-size: 19px;
+}
+
+h3 {
+
+    margin-top: 0;
+
+    font-size: 15px;
+}
+
+
+/* =========================
+   GRID
+========================= */
+
+.grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+
+/* =========================
+   LABELS
+========================= */
+
+label {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    font-weight: 700;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   INPUTS
+========================= */
+
+input,
+select {
+
+    width: 100%;
+
+    height: 40px;
+
+    padding: 10px;
+
+    border:
+        1px solid #bfc6cd;
+
+    border-radius: 6px;
+
+    background: white;
+
+    font-size: 15px;
+
+    color: #17202a;
+}
+
+input:focus,
+select:focus {
+
+    outline: none;
+
+    border-color: #1f5f8b;
+}
+
+
+/* =========================
+   INPUT + UNIDAD
+========================= */
+
+.input-unit {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    height: 40px;
+}
+
+.input-unit input {
+
+    flex: 1;
+}
+
+.input-unit span {
+
+    color: #5e6872;
+
+    font-weight: 400;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   RESULTADOS DENTRO DE INPUT-UNIT
+   (Elevación / Longitud de pista)
+===================================================== */
+
+.input-unit strong {
+
+    flex: 1;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    color: #17202a;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   INPUT GROUP
+========================= */
+
+.input-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.input-group label {
+
+    display: block;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
+.primary,
+.secondary {
+
+    border: 0;
+
+    border-radius: 6px;
+
+    padding: 11px 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.primary {
+
+    display: block;
+
+    margin: 18px auto 0;
+
+    background: #1f5f8b;
+
+    color: white;
+}
+
+
+.secondary {
+
+    background: #e9edf1;
+
+    color: #17202a;
+
+    margin-top: 0;
+}
+
+
+/* =========================
+   RESULTADOS
+========================= */
+
+.results-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+.results-grid > div {
+
+    border:
+        1px solid #e0e4e8;
+
+    border-radius: 7px;
+
+    padding: 13px;
+
+    min-height: 70px;
+}
+
+
+.results-grid span {
+
+    display: block;
+
+    font-size: 12px;
+
+    color: #69737d;
+
+    margin-bottom: 6px;
+}
+
+
+.results-grid strong {
+
+    font-size: 21px;
+}
+
+
+/* =========================
+   PERFORMANCE
+========================= */
+
+.performance strong {
+
+    font-size: 25px;
+}
+
+
+.performance small {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: #707a83;
+}
+
+
+/* =========================
+   TAKEOFF FACTOR
+========================= */
+
+#takeoffFactor {
+
+    font-size: 25px;
+}
+
+
+/* =========================
+   SUBSECCIÓN
+========================= */
+
+.subsection-title {
+
+    margin-top: 20px;
+
+    padding-top: 18px;
+
+    border-top:
+        1px solid #e0e4e8;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status {
+
+    margin-top: 14px;
+
+    padding: 12px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+}
+
+
+.status.info {
+
+    background: #edf4f9;
+
+    border:
+        1px solid #c9dce9;
+}
+
+
+/* =========================
+   SECCIÓN TITULO
+========================= */
+
+.section-title {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-start;
+
+    gap: 16px;
+}
+
+
+.section-title h2,
+.section-title h3 {
+
+    margin-top: 0;
+}
+
+
+.muted {
+
+    color: #69737d;
+
+    margin-top: -8px;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   TRAZABILIDAD
+========================= */
+
+.calculation {
+
+    margin-top: 18px;
+
+    padding-top: 18px;
+
+    border-top:
+        1px solid #e0e4e8;
+}
+
+
+.calculation p {
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+.hidden {
+
+    display: none;
+}
+
+
+.source-box {
+
+    background: #f7f8f9;
+
+    border:
+        1px solid #dfe3e7;
+
+    border-radius: 7px;
+
+    padding: 14px;
+}
+
+
+.source-box li {
+
+    margin: 5px 0;
+}
+
+
+/* =========================
+   PERFORMANCE
+========================= */
+
+.performance > div {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .results-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .topbar {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap: 12px;
+    }
+
+
+    .grid,
+    .results-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .section-title {
+
+        flex-direction:
+            column;
+    }
+
+
+    .secondary {
+
+        width: 100%;
+    }
+
+
+    .primary {
+
+        width: 100%;
+    }
+
+}
+
+
+/* =================================================
+   LEGACY — DIGITALIZADOR FA2-2
+   Se conserva por compatibilidad.
+================================================= */
+
+.digitalizer-grid {
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+}
+
+
+.digitalizer-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+
+.digitalizer-buttons button {
+
+    margin-top: 0;
+}
+
+
+.digital-table-container {
+
+    margin-top: 20px;
+
+    overflow-x: auto;
+}
+
+
+#digitalTable {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 14px;
+}
+
+
+#digitalTable th,
+#digitalTable td {
+
+    padding: 10px;
+
+    border-bottom:
+        1px solid #dfe3e7;
+
+    text-align: left;
+}
+
+
+#digitalTable th {
+
+    background: #f3f5f7;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+}
+
+
+.delete-point {
+
+    border: 0;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    color: #a33;
+}
+
+
+.code-output {
+
+    margin-top: 20px;
+
+    border:
+        1px solid #dfe3e7;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+}
+
+
+.code-output-header {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    padding: 10px 14px;
+
+    background: #f3f5f7;
+}
+
+
+.code-output-header button {
+
+    margin: 0;
+
+    padding: 7px 12px;
+}
+
+
+#digitalCode {
+
+    margin: 0;
+
+    padding: 15px;
+
+    background: #17202a;
+
+    color: #f2f4f5;
+
+    overflow-x: auto;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   ESTADO DE DIGITALIZACIÓN FA2-2
+===================================================== */
+
+.curve-status {
+
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border:
+        1px solid #d9dee5;
+
+    border-radius: 10px;
+
+    background: #f8f9fa;
+}
+
+
+.curve-status-title {
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    margin-bottom: 15px;
+}
+
+
+.curve-status-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+}
+
+
+.curve-status-item {
+
+    padding: 15px;
+
+    background: white;
+
+    border:
+        1px solid #d9dee5;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.curve-status-item strong {
+
+    font-size: 16px;
+}
+
+
+.curve-count {
+
+    font-size: 14px;
+
+    color: #68707a;
+}
+
+
+/* =====================================================
+   CARGA MASIVA DE PUNTOS FA2-2
+===================================================== */
+
+.batch-loader {
+
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border:
+        1px solid #d9dee5;
+
+    border-radius: 10px;
+
+    background: #f8f9fa;
+}
+
+
+.batch-loader-title {
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+}
+
+
+.batch-loader-help {
+
+    margin: 0 0 12px 0;
+
+    color: #68707a;
+
+    font-size: 14px;
+}
+
+
+#batchPoints {
+
+    width: 100%;
+
+    min-height: 160px;
+
+    padding: 14px;
+
+    border:
+        1px solid #cfd5dc;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    font-family: monospace;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    resize: vertical;
+}
+
+
+.batch-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 12px;
+
+    flex-wrap: wrap;
+}
