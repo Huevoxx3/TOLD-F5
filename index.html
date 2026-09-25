@@ -258,7 +258,7 @@
                     <input
                         id="grossWeight"
                         type="number"
-                        value="16000"
+                        value="13900"
                     >
 
                     <span>lb</span>
@@ -442,10 +442,24 @@
         </small>
 
     </div>
+<div>
+
+    <span>
+        Single Engine Takeoff Speed
+    </span>
+
+    <strong id="setos">
+        —
+    </strong>
+
+    <small>
+        KIAS
+    </small>
 
 </div>
-
+</div>
 <br>
+
 
         <!-- ========================= -->
         <!-- FA2-2 -->
@@ -465,13 +479,6 @@
 
             </div>
 
-
-            <button
-                id="showCalcBtn"
-                class="secondary"
-            >
-                VER CÁLCULO
-            </button>
 
         </div>
 
@@ -548,9 +555,38 @@
 
         </div>
 
-<button id="viewGradientBtn" class="gradient-button">
-    VER RECORRIDO
-</button>
+<br>
+
+<!-- ========================= -->
+<!-- TABLAS -->
+<!-- ========================= -->
+
+<div class="section-title">
+    <div>
+        <h3>TABLAS</h3>
+        <p class="muted">
+            Recorridos de las tablas de performance
+        </p>
+    </div>
+</div>
+
+<div class="tables-buttons">
+
+    <button
+        id="viewGradientBtn"
+        class="secondary"
+    >
+        TABLA GRADIENTE
+    </button>
+
+    <button
+        id="setosBtn"
+        class="secondary"
+    >
+        TABLA SETOS
+    </button>
+
+</div>
 
         <!-- ========================= -->
         <!-- TRAZABILIDAD -->
@@ -641,7 +677,7 @@
 
 <script src="gradient/gradient-data.js"></script>
 <script src="gradient/gradient-engine.js"></script>
-
+<script src="setos/setos-engine.js"></script>
 <script src="app.js"></script>
 
 </body>

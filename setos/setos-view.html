@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FA-23 — Calculador SETOS</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;background:#0d151c;color:#edf3f7}
+body{overflow:hidden}
+.app{height:100%;display:grid;grid-template-columns:390px 1fr}
+.sidebar{overflow:auto;background:#101a22;border-right:1px solid #30424e;padding:18px}
+h1{font-size:20px;margin:0 0 3px}.sub{font-size:12px;color:#91a8b8;margin-bottom:18px}
+.card{background:#14212a;border:1px solid #304652;border-radius:10px;padding:13px;margin-bottom:12px}
+h2{font-size:12px;letter-spacing:.08em;margin:0 0 11px;color:#a9c2d1}
+label{display:block;font-size:11px;color:#9fb3c0;margin:8px 0 4px}
+input{width:100%;padding:9px;background:#0f1820;border:1px solid #405765;border-radius:7px;color:#eef4f7;font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+button{padding:10px 12px;border-radius:7px;border:1px solid #405765;background:#162630;color:#eef4f7;font-weight:bold;cursor:pointer}
+button:hover{background:#1d3340}.primary{width:100%;background:#176b52;border-color:#43aa86;margin-top:10px}
+.status{font-size:12px;line-height:1.45;padding:10px;border-radius:7px;background:#101a21;border:1px solid #30434e;margin-top:9px}
+.status.ok{border-color:#2d8e67;background:#10261e;color:#93e5bd}.status.err{border-color:#a84f55;background:#28171a;color:#ffb4b4}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric{background:#0f1920;border:1px solid #30434e;border-radius:8px;padding:9px}
+.metric span{display:block;font-size:10px;color:#8ea4b2}.metric b{font-size:20px}
+.small{font-size:11px;color:#8ea4b2;line-height:1.45}
+.trace{margin:0;padding-left:18px;font-size:11px;line-height:1.7}
+.workspace{display:flex;flex-direction:column;min-width:0;height:100%}
+.toolbar{height:54px;flex:0 0 54px;display:flex;align-items:center;gap:7px;padding:8px 12px;background:#111c24;border-bottom:1px solid #30424e}
+.toolbar button{padding:7px 10px}.zoom{font-weight:bold;min-width:55px;text-align:center}.spacer{flex:1}.hint{font-size:11px;color:#8299a8}
+.viewport{flex:1;overflow:auto;background:#28343c;padding:18px}
+.stage{position:relative;display:inline-block;width:721px;height:760px;transform-origin:top left}
+.stage img{position:absolute;width:721px;height:760px;left:0;top:0;user-select:none;-webkit-user-drag:none}
+svg{position:absolute;left:0;top:0;width:721px;height:760px;pointer-events:none;overflow:visible}
+.path{stroke:#ff3030;stroke-width:2.5;fill:none}
+.helper{stroke:#ff3030;stroke-width:1.3;stroke-dasharray:5 4;fill:none}
+.pt{fill:#ff3030;stroke:#fff;stroke-width:1.5}
+.pt2{fill:#176b52;stroke:#fff;stroke-width:1.5}
+.text{font-size:12px;font-weight:bold;fill:#111;paint-order:stroke;stroke:#fff;stroke-width:3px}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<h1>FA-23 — SETOS</h1>
+<div class="sub">SINGLE ENGINE TAKEOFF SPEED · CALCULADOR CONTINUO</div>
+
+<div class="card">
+<h2>ENTRADAS</h2>
+<div class="grid2">
+<div><label>Takeoff Factor</label><input id="tof" type="number" min="3" max="11" step="0.01" value="6.50"></div>
+<div><label>Pressure Altitude (ft)</label><input id="pa" type="number" min="0" max="8000" step="100" value="3000"></div>
+<div><label>Gross Weight (lb)</label><input id="gw" type="number" min="12000" max="21000" step="100" value="16500"></div>
+<div><label>CG (% MAC)</label><input id="cg" type="number" min="0" max="25" step="0.1" value="15"></div>
+</div>
+<button id="calc" class="primary">CALCULAR SETOS</button>
+<div id="status" class="status">Ingresá los datos y calculá.</div>
+</div>
+
+<div class="card">
+<h2>RESULTADO</h2>
+<div class="resultGrid">
+<div class="metric"><span>SETOS</span><b id="setos">—</b> <span>KIAS</span></div>
+<div class="metric"><span>GW</span><b id="gwOut">—</b> <span>lb</span></div>
+<div class="metric"><span>CG</span><b id="cgOut">—</b> <span>% MAC</span></div>
+<div class="metric"><span>PA</span><b id="paOut">—</b> <span>ft</span></div>
+</div>
+</div>
+
+<div class="card">
+<h2>INTERPOLACIÓN</h2>
+<div id="interp" class="small">—</div>
+</div>
+
+<div class="card">
+<h2>RECORRIDO</h2>
+<ol id="trace" class="trace"><li>Sin calcular.</li></ol>
+</div>
+
+<div class="card">
+<h2>CRITERIO</h2>
+<div class="small">
+Se interpolan valores intermedios entre curvas digitalizadas. No se extrapola fuera del tramo realmente disponible de las curvas.
+</div>
+</div>
+</aside>
+
+<main class="workspace">
+<div class="toolbar">
+<button id="minus">−</button><span id="zoom" class="zoom">100%</span><button id="plus">+</button>
+<button id="reset">Restablecer</button>
+<span class="spacer"></span><span class="hint">Recorrido digitalizado sobre la carta original</span>
+</div>
+<div class="viewport" id="viewport">
+<div class="stage" id="stage">
+<img id="chart" alt="FA-23 SETOS">
+<svg id="overlay" viewBox="0 0 721 760" preserveAspectRatio="none"></svg>
+</div>
+</div>
+</main>
+</div>
+
+<script src="setos-engine.js"></script>
+<script>
+const D=window.FA23_SETOS_DATA;
+const IMG="../data/FA23-SETOS.png";
+const $=id=>document.getElementById(id);
+const overlay=$("overlay"),stage=$("stage"),viewport=$("viewport");
+let zoom=1,last=null;
+
+function sx(scale,v){
+ const a=Number(scale.a),b=Number(scale.b),x1=scale.pA.x,x2=scale.pB.x;
+ return x1+(v-a)*(x2-x1)/(b-a);
+}
+function sy(scale,y){
+ const a=Number(scale.a),b=Number(scale.b),y1=scale.pA.y,y2=scale.pB.y;
+ return a+(y-y1)*(b-a)/(y2-y1);
+}
+function bracket(values,v){
+ const a=values.slice().sort((x,y)=>x-y);
+ if(v<a[0] || v>a[a.length-1]) return null;
+ if(v===a[a.length-1]) return {lo:v,hi:v,t:0};
+ for(let i=0;i<a.length-1;i++) if(v>=a[i] && v<=a[i+1])
+   return {lo:a[i],hi:a[i+1],t:(v-a[i])/(a[i+1]-a[i])};
+ return null;
+}
+function yAtX(pts,x){
+ for(let i=0;i<pts.length-1;i++){
+   const p=pts[i],q=pts[i+1],dx=q.xPixel-p.xPixel;
+   if(!dx) continue;
+   if(x>=Math.min(p.xPixel,q.xPixel)-1e-7 && x<=Math.max(p.xPixel,q.xPixel)+1e-7){
+     const t=(x-p.xPixel)/dx;
+     return p.yPixel+t*(q.yPixel-p.yPixel);
+   }
+ }
+ return null;
+}
+function xAtY(pts,y){
+ for(let i=0;i<pts.length-1;i++){
+   const p=pts[i],q=pts[i+1],dy=q.yPixel-p.yPixel;
+   if(!dy) continue;
+   if(y>=Math.min(p.yPixel,q.yPixel)-1e-7 && y<=Math.max(p.yPixel,q.yPixel)+1e-7){
+     const t=(y-p.yPixel)/dy;
+     return p.xPixel+t*(q.xPixel-p.xPixel);
+   }
+ }
+ return null;
+}
+function interp(a,b,t){return a+(b-a)*t}
+function fail(message){return {valid:false,message}}
+
+function calc(v){
+ return window.calculateFA23SETOS(v);
+}
+
+function line(x1,y1,x2,y2,cls="path"){const e=document.createElementNS("http://www.w3.org/2000/svg","line");e.setAttribute("x1",x1);e.setAttribute("y1",y1);e.setAttribute("x2",x2);e.setAttribute("y2",y2);e.setAttribute("class",cls);overlay.appendChild(e)}
+function circle(x,y,cls="pt",r=5){const e=document.createElementNS("http://www.w3.org/2000/svg","circle");e.setAttribute("cx",x);e.setAttribute("cy",y);e.setAttribute("r",r);e.setAttribute("class",cls);overlay.appendChild(e)}
+function text(x,y,s){const e=document.createElementNS("http://www.w3.org/2000/svg","text");e.setAttribute("x",x+7);e.setAttribute("y",y-7);e.setAttribute("class","text");e.textContent=s;overlay.appendChild(e)}
+function draw(r){
+ overlay.innerHTML=""; if(!r||!r.valid)return;
+ const p=r.path;
+ // TOF -> PA
+ line(p.tof.x,336.88,p.pressureAltitude.x,p.pressureAltitude.y);
+ circle(p.tof.x,336.88);circle(p.pressureAltitude.x,p.pressureAltitude.y);text(p.pressureAltitude.x,p.pressureAltitude.y,"PA");
+ // PA -> upper GW
+ line(p.pressureAltitude.x,p.pressureAltitude.y,p.grossWeight.x,p.grossWeight.y);
+ circle(p.grossWeight.x,p.grossWeight.y);text(p.grossWeight.x,p.grossWeight.y,"GW");
+ // upper GW -> CG
+ line(p.grossWeight.x,p.grossWeight.y,p.cg.x,p.cg.y);
+ circle(p.cg.x,p.cg.y);text(p.cg.x,p.cg.y,"CG");
+ // CG -> lower GW (horizontal left)
+ line(p.cg.x,p.cg.y,p.bottomGW.x,p.bottomGW.y);
+ // lower GW -> SETOS
+ line(p.bottomGW.x,p.bottomGW.y,p.setos.x,p.setos.y);
+ circle(p.bottomGW.x,p.bottomGW.y,"pt2");circle(p.setos.x,p.setos.y,"pt2");text(p.setos.x,p.setos.y,"SETOS");
+ // guides
+ line(p.grossWeight.x,p.grossWeight.y,p.cg.x,p.grossWeight.y,"helper");
+ line(p.bottomGW.x,p.bottomGW.y,p.bottomGW.x,p.setos.y,"helper");
+}
+function render(r){
+ if(!r) return;
+ if(!r.valid){$("status").className="status err";$("status").textContent="✕ "+r.message;$("setos").textContent="—";overlay.innerHTML="";return}
+ $("status").className="status ok";$("status").textContent="✓ RECORRIDO CALCULADO — dentro del rango digitalizado.";
+ $("setos").textContent=r.result.setos.toFixed(1);
+ $("gwOut").textContent=r.inputs.grossWeight.toFixed(0);
+ $("cgOut").textContent=r.inputs.cg.toFixed(1);
+ $("paOut").textContent=r.inputs.pressureAltitude.toFixed(0);
+ const p=r.interpolation;
+ $("interp").innerHTML=
+   "<b>PA:</b> "+p.pressureAltitude.lower+" ↔ "+p.pressureAltitude.upper+" ft · "+(p.pressureAltitude.fraction*100).toFixed(1)+"%"+
+   "<br><b>GW:</b> "+p.grossWeight.lower.toLocaleString()+" ↔ "+p.grossWeight.upper.toLocaleString()+" lb · "+(p.grossWeight.fraction*100).toFixed(1)+"%"+
+   "<br><b>CG:</b> "+p.cg.lower+" ↔ "+p.cg.upper+" % MAC · "+(p.cg.fraction*100).toFixed(1)+"%";
+ $("trace").innerHTML=[
+   "TOF → PA: "+r.inputs.takeoffFactor.toFixed(2)+" → PA "+r.inputs.pressureAltitude.toFixed(0)+" ft",
+   "PA → Gross Weight: "+r.inputs.grossWeight.toFixed(0)+" lb",
+   "Gross Weight → CG: "+r.inputs.cg.toFixed(1)+" % MAC",
+   "CG → Gross Weight inferior",
+   "Gross Weight inferior → SETOS",
+   "<b>SETOS: "+r.result.setos.toFixed(1)+" KIAS</b>"
+ ].map(x=>"<li>"+x+"</li>").join("");
+ draw(r); last=r;
+}
+function run(){render(calc({tof:$("tof").value,pa:$("pa").value,gw:$("gw").value,cg:$("cg").value}))}
+
+function loadFromQuery(){
+ const q=new URLSearchParams(location.search);
+ if(q.has("tof")) $("tof").value=q.get("tof");
+ if(q.has("pa")) $("pa").value=q.get("pa");
+ if(q.has("gw")) $("gw").value=q.get("gw");
+ if(q.has("cg")) $("cg").value=q.get("cg");
+}
+["tof","pa","gw","cg"].forEach(id=>$(id).addEventListener("input",run));
+$("calc").onclick=run;
+$("plus").onclick=()=>setZoom(zoom*1.25);
+$("minus").onclick=()=>setZoom(zoom/1.25);
+$("reset").onclick=()=>{setZoom(1);viewport.scrollLeft=0;viewport.scrollTop=0};
+function setZoom(z){zoom=Math.max(.5,Math.min(3,z));stage.style.transform="scale("+zoom+")";stage.style.transformOrigin="top left";$("zoom").textContent=Math.round(zoom*100)+"%";}
+$("chart").src=IMG;
+loadFromQuery();
+run();
+</script>
+</body>
+</html>

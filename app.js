@@ -966,6 +966,72 @@ if (takeoffFactorResult.valid) {
 }
 
 // =================================================
+// FA23 — SINGLE ENGINE TAKEOFF SPEED
+// =================================================
+
+function updateMainSETOS(tof, pa, gw, cg) {
+
+    const setosElement = $("setos");
+
+    if (!setosElement) {
+        return;
+    }
+
+    setosElement.textContent = "PENDIENTE";
+
+    if (
+        typeof window.calculateFA23SETOS !== "function" ||
+        !Number.isFinite(tof) ||
+        !Number.isFinite(pa) ||
+        !Number.isFinite(gw) ||
+        !Number.isFinite(cg)
+    ) {
+        return;
+    }
+
+    try {
+
+        const result =
+            window.calculateFA23SETOS({
+                tof: tof,
+                pa: pa,
+                gw: gw,
+                cg: cg
+            });
+
+        if (result.valid) {
+
+            setosElement.textContent =
+                `${result.result.setos.toFixed(1)} KIAS`;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error calculando SETOS:",
+            error
+        );
+
+    }
+}
+
+if (takeoffFactorResult.valid) {
+
+    updateMainSETOS(
+        takeoffFactorResult.factor,
+        pa,
+        grossWeight,
+        cg
+    );
+
+} else {
+
+    $("setos").textContent = "PENDIENTE";
+
+}
+
+// =================================================
 // FA23 — GRADIENTE DE ASCENSO
 // =================================================
 
@@ -1180,6 +1246,56 @@ if (gradientButton) {
     };
 }
 
+// =================================================
+// SETOS — VER RECORRIDO
+// =================================================
+
+const setosButton = $("setosBtn");
+
+if (setosButton) {
+
+    setosButton.onclick = function () {
+
+        // Verificar que el Takeoff Factor sea válido
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir el recorrido SETOS porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+        // Datos actuales del cálculo
+        const setosTOF =
+            takeoffFactorResult.factor;
+
+        const setosPA =
+            pa;
+
+        const setosGW =
+            grossWeight;
+
+        const setosCG =
+            cg;
+        
+
+        // Construir URL para el módulo SETOS
+        const url =
+            "setos/setos-view.html" +
+            `?tof=${encodeURIComponent(setosTOF)}` +
+            `&pa=${encodeURIComponent(setosPA)}` +
+            `&gw=${encodeURIComponent(setosGW)}` +
+            `&cg=${encodeURIComponent(setosCG)}`;
+
+        // Abrir el recorrido
+        window.open(
+            url,
+            "_blank"
+        );
+    };
+}
+
 // -------------------------------------------------
 // MENSAJE DE ESTADO
 // -------------------------------------------------
@@ -1199,26 +1315,6 @@ $("calculateBtn")
         "click",
         calculate
     );
-
-
-
-// =====================================================
-// MOSTRAR / OCULTAR TRAZABILIDAD
-// =====================================================
-
-$("showCalcBtn")
-    .addEventListener(
-        "click",
-        function () {
-
-            $("calculationPanel")
-                .classList
-                .toggle("hidden");
-
-        }
-    );
-
-
 
 // =====================================================
 // ARRANQUE

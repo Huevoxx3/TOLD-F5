@@ -237,22 +237,53 @@
     }
 
     // -----------------------------------------------------
-    // 7. TAILWIND
-    // -----------------------------------------------------
-    const xTail = scaleValueToX(tailScale, tailwind);
-    if (xTail === null) return fail("No se pudo ubicar el Tailwind.");
+// 7. TAILWIND + PROYECCIÓN PARALELA A LA GUIDELINE
+// -----------------------------------------------------
+const xTail = scaleValueToX(tailScale, tailwind);
 
-    const guideline = D.elements.guidelines[String(selectedGuideline)];
-    const yGuidelineAtTail = yAtX(guideline, xTail, 2.0);
-    if (yGuidelineAtTail === null) {
-      return fail("El valor de Tailwind queda fuera del tramo de la guideline seleccionada.");
-    }
+if (xTail === null) {
+  return fail("No se pudo ubicar el Tailwind.");
+}
+
+const guideline =
+  D.elements.guidelines[String(selectedGuideline)];
+
+if (!guideline || guideline.length < 2) {
+  return fail("La guideline seleccionada no tiene suficientes puntos.");
+}
+
+// La guideline NO se toca.
+// Solo usamos su pendiente como referencia.
+const g1 = guideline[0];
+const g2 = guideline[1];
+
+const dx =
+  g2.xPixel - g1.xPixel;
+
+const dy =
+  g2.yPixel - g1.yPixel;
+
+if (Math.abs(dx) < 1e-9) {
+  return fail("La guideline seleccionada no permite calcular una pendiente.");
+}
+
+const guidelineSlope =
+  dy / dx;
+
+// Desde el punto BASE se proyecta una línea
+// paralela a la guideline hasta la vertical del Tailwind.
+const yProjectedAtTail =
+  yReference +
+  guidelineSlope * (xTail - baselineX);
 
     // -----------------------------------------------------
     // 8. GRADIENT %
     // -----------------------------------------------------
-    const gradientPercent = scaleYToValue(gradScale, yGuidelineAtTail);
-    const gradientFtNm = scaleYToValue(ftNmScale, yGuidelineAtTail);
+const gradientPercent =
+  scaleYToValue(gradScale, yProjectedAtTail);
+
+const gradientFtNm =
+  scaleYToValue(ftNmScale, yProjectedAtTail);
 
     return {
       valid: true,
@@ -285,14 +316,38 @@
         rateOfClimb: { x: xGW, y: yPA, value: roc },
         referenceCurve: { x: xGW, y: yReference },
         baseline: baselinePoint,
-        guideline: {
-          number: selectedGuideline,
-          atBaseline: { x: baselineX, y: selectedGuidelineY },
-          atTailwind: { x: xTail, y: yGuidelineAtTail }
-        },
-        tailwind: { x: xTail, y: yGuidelineAtTail, value: tailwind },
-        gradientPercent: { x: scaleValueToX(gradScale, gradientPercent), y: yGuidelineAtTail, value: gradientPercent },
-        gradientFtNm: { x: scaleValueToX(ftNmScale, gradientFtNm), y: yGuidelineAtTail, value: gradientFtNm }
+guideline: {
+    number: selectedGuideline,
+
+    // Punto de referencia de la guideline.
+    // NO forma parte del recorrido.
+    atBaseline: {
+        x: baselineX,
+        y: selectedGuidelineY
+    },
+
+    // Punto final de la proyección paralela.
+    atTailwind: {
+        x: xTail,
+        y: yProjectedAtTail
+    }
+},
+tailwind: {
+    x: xTail,
+    y: yProjectedAtTail,
+    value: tailwind
+},
+gradientPercent: {
+    x: scaleValueToX(gradScale, gradientPercent),
+    y: yProjectedAtTail,
+    value: gradientPercent
+},
+
+gradientFtNm: {
+    x: scaleValueToX(ftNmScale, gradientFtNm),
+    y: yProjectedAtTail,
+    value: gradientFtNm
+}
       }
     };
   }

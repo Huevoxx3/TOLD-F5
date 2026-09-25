@@ -217,24 +217,18 @@
     );
 
 
-    // Baseline → Guideline
-    line(
-      p.baseline.x,
-      p.baseline.y,
-      p.guideline.atBaseline.x,
-      p.guideline.atBaseline.y,
-      "pathGuide"
-    );
+// Baseline → Tailwind
+// Línea paralela a la guideline seleccionada.
+// La guideline se utiliza únicamente como referencia
+// de dirección; el recorrido NO la toca.
 
-
-    // Guideline → Tailwind
-    line(
-      p.guideline.atBaseline.x,
-      p.guideline.atBaseline.y,
-      p.guideline.atTailwind.x,
-      p.guideline.atTailwind.y,
-      "pathGuide"
-    );
+line(
+  p.baseline.x,
+  p.baseline.y,
+  p.guideline.atTailwind.x,
+  p.guideline.atTailwind.y,
+  "pathGuide"
+);
 
 
     // Tailwind → Gradient %
