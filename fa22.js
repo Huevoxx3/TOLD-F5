@@ -1152,18 +1152,72 @@ function calculateAftStickSpeed(
 const FA23_TAKEOFF_FACTOR = {
 
     // -------------------------------------------------
-    // 0 FT
+    // 0 FT / MSL
     // -------------------------------------------------
 
     0: {
 
+        "-30": {
+            MAX_OFF: 9.8,
+            MAX_ON: 9.1,
+            MIN_AB_OFF: 7.0,
+            MIN_AB_ON: 6.3,
+            MIL_OFF: 5.9,
+            MIL_ON: 5.1
+        },
+
+        "-20": {
+            MAX_OFF: 9.3,
+            MAX_ON: 8.6,
+            MIN_AB_OFF: 6.6,
+            MIN_AB_ON: 5.9,
+            MIL_OFF: 5.5,
+            MIL_ON: 4.8
+        },
+
+        "-10": {
+            MAX_OFF: 8.8,
+            MAX_ON: 8.2,
+            MIN_AB_OFF: 6.2,
+            MIN_AB_ON: 5.6,
+            MIL_OFF: 5.2,
+            MIL_ON: 4.6
+        },
+
+        0: {
+            MAX_OFF: 8.2,
+            MAX_ON: 7.6,
+            MIN_AB_OFF: 5.8,
+            MIN_AB_ON: 5.2,
+            MIL_OFF: 4.9,
+            MIL_ON: 4.3
+        },
+
+        10: {
+            MAX_OFF: 7.6,
+            MAX_ON: 7.0,
+            MIN_AB_OFF: 5.3,
+            MIN_AB_ON: 4.8,
+            MIL_OFF: 4.4,
+            MIL_ON: 3.9
+        },
+
         20: {
-            MAX_OFF: 7.1,
+            MAX_OFF: 7.0,
             MAX_ON: 6.5,
             MIN_AB_OFF: 4.9,
-            MIN_AB_ON: 4.3,
+            MIN_AB_ON: 4.4,
             MIL_OFF: 4.0,
             MIL_ON: 3.5
+        },
+
+        30: {
+            MAX_OFF: 6.4,
+            MAX_ON: 5.9,
+            MIN_AB_OFF: 4.4,
+            MIN_AB_ON: 3.9,
+            MIL_OFF: 3.6,
+            MIL_ON: 3.2
         },
 
         40: {
@@ -1172,7 +1226,16 @@ const FA23_TAKEOFF_FACTOR = {
             MIN_AB_OFF: 3.8,
             MIN_AB_ON: 3.4,
             MIL_OFF: 3.1,
-            MIL_ON: 2.6
+            MIL_ON: 2.7
+        },
+
+        50: {
+            MAX_OFF: 4.8,
+            MAX_ON: 4.5,
+            MIN_AB_OFF: 3.2,
+            MIN_AB_ON: 2.8,
+            MIL_OFF: 2.5,
+            MIL_ON: 2.2
         }
 
     },
@@ -1181,32 +1244,90 @@ const FA23_TAKEOFF_FACTOR = {
     // 2000 FT
     // -------------------------------------------------
 
-2000: {
+    2000: {
 
-    20: {
-        MAX_OFF: 5.4,
-        MAX_ON: 5.5,
-        MIN_AB_OFF: 4.1,
-        MIN_AB_ON: 3.7,
-        MIL_OFF: 3.4,
-        MIL_ON: 2.9
+        "-30": {
+            MAX_OFF: 8.5,
+            MAX_ON: 7.9,
+            MIN_AB_OFF: 6.0,
+            MIN_AB_ON: 5.2,
+            MIL_OFF: 5.0,
+            MIL_ON: 4.4
+        },
+
+        "-20": {
+            MAX_OFF: 8.1,
+            MAX_ON: 7.5,
+            MIN_AB_OFF: 5.7,
+            MIN_AB_ON: 5.1,
+            MIL_OFF: 4.7,
+            MIL_ON: 4.1
+        },
+
+        "-10": {
+            MAX_OFF: 7.6,
+            MAX_ON: 7.0,
+            MIN_AB_OFF: 5.3,
+            MIN_AB_ON: 4.8,
+            MIL_OFF: 4.4,
+            MIL_ON: 3.9
+        },
+
+        0: {
+            MAX_OFF: 7.1,
+            MAX_ON: 6.6,
+            MIN_AB_OFF: 5.0,
+            MIN_AB_ON: 4.5,
+            MIL_OFF: 4.1,
+            MIL_ON: 3.6
+        },
+
+        10: {
+            MAX_OFF: 6.6,
+            MAX_ON: 6.2,
+            MIN_AB_OFF: 4.6,
+            MIN_AB_ON: 4.1,
+            MIL_OFF: 3.7,
+            MIL_ON: 3.3
+        },
+
+        20: {
+            MAX_OFF: 6.0,
+            MAX_ON: 5.6,
+            MIN_AB_OFF: 4.1,
+            MIN_AB_ON: 3.7,
+            MIL_OFF: 3.4,
+            MIL_ON: 2.9
+        },
+
+        30: {
+            MAX_OFF: 5.4,
+            MAX_ON: 5.0,
+            MIN_AB_OFF: 3.6,
+            MIN_AB_ON: 3.2,
+            MIL_OFF: 2.9,
+            MIL_ON: 2.6
+        },
+
+        40: {
+            MAX_OFF: 4.7,
+            MAX_ON: 4.4,
+            MIN_AB_OFF: 3.2,
+            MIN_AB_ON: 2.8,
+            MIL_OFF: 2.5,
+            MIL_ON: 2.2
+        },
+
+        50: {
+            MAX_OFF: 4.0,
+            MAX_ON: 3.7,
+            MIN_AB_OFF: 2.6,
+            MIN_AB_ON: 2.3,
+            MIL_OFF: 2.0,
+            MIL_ON: 1.8
+        }
+
     },
-
-    30: {
-        MAX_OFF: 5.4,
-        MIL_OFF: 3.0
-    },
-
-    40: {
-        MAX_OFF: 4.7,
-        MAX_ON: 4.4,
-        MIN_AB_OFF: 3.2,
-        MIN_AB_ON: 2.8,
-        MIL_OFF: 2.5,
-        MIL_ON: 2.2
-    }
-
-},
 
     // -------------------------------------------------
     // 4000 FT
@@ -1214,13 +1335,67 @@ const FA23_TAKEOFF_FACTOR = {
 
     4000: {
 
-        20: {
-            MAX_OFF: 5.0,
-            MAX_ON: 4.6,
+        "-30": {
+            MAX_OFF: 7.3,
+            MAX_ON: 6.8,
+            MIN_AB_OFF: 5.1,
+            MIN_AB_ON: 4.6,
+            MIL_OFF: 4.2,
+            MIL_ON: 3.5
+        },
+
+        "-20": {
+            MAX_OFF: 7.0,
+            MAX_ON: 6.5,
+            MIN_AB_OFF: 4.9,
+            MIN_AB_ON: 4.3,
+            MIL_OFF: 4.0,
+            MIL_ON: 3.5
+        },
+
+        "-10": {
+            MAX_OFF: 6.6,
+            MAX_ON: 6.1,
+            MIN_AB_OFF: 4.5,
+            MIN_AB_ON: 4.0,
+            MIL_OFF: 3.7,
+            MIL_ON: 3.2
+        },
+
+        0: {
+            MAX_OFF: 6.1,
+            MAX_ON: 5.6,
+            MIN_AB_OFF: 4.1,
+            MIN_AB_ON: 3.6,
+            MIL_OFF: 3.4,
+            MIL_ON: 3.0
+        },
+
+        10: {
+            MAX_OFF: 5.6,
+            MAX_ON: 5.2,
             MIN_AB_OFF: 3.7,
-            MIN_AB_ON: 3.0,
+            MIN_AB_ON: 3.3,
+            MIL_OFF: 3.1,
+            MIL_ON: 2.7
+        },
+
+        20: {
+            MAX_OFF: 5.1,
+            MAX_ON: 4.7,
+            MIN_AB_OFF: 3.7,
+            MIN_AB_ON: 3.2,
             MIL_OFF: 2.6,
             MIL_ON: 2.3
+        },
+
+        30: {
+            MAX_OFF: 4.6,
+            MAX_ON: 4.3,
+            MIN_AB_OFF: 3.2,
+            MIN_AB_ON: 2.8,
+            MIL_OFF: 2.4,
+            MIL_ON: 2.2
         },
 
         40: {
@@ -1230,6 +1405,104 @@ const FA23_TAKEOFF_FACTOR = {
             MIN_AB_ON: 2.3,
             MIL_OFF: 2.0,
             MIL_ON: 1.8
+        },
+
+        50: {
+            MAX_OFF: 3.4,
+            MAX_ON: null,
+            MIN_AB_OFF: 2.1,
+            MIN_AB_ON: null,
+            MIL_OFF: 1.6,
+            MIL_ON: null
+        }
+
+    },
+
+    // -------------------------------------------------
+    // 6000 FT
+    // -------------------------------------------------
+
+    6000: {
+
+        "-30": {
+            MAX_OFF: 6.2,
+            MAX_ON: 5.8,
+            MIN_AB_OFF: 4.2,
+            MIN_AB_ON: 3.8,
+            MIL_OFF: 3.5,
+            MIL_ON: 3.0
+        },
+
+        "-20": {
+            MAX_OFF: 5.9,
+            MAX_ON: 5.4,
+            MIN_AB_OFF: 4.0,
+            MIN_AB_ON: 3.6,
+            MIL_OFF: 3.3,
+            MIL_ON: 2.8
+        },
+
+        "-10": {
+            MAX_OFF: 5.6,
+            MAX_ON: 5.2,
+            MIN_AB_OFF: 3.8,
+            MIN_AB_ON: 3.4,
+            MIL_OFF: 3.0,
+            MIL_ON: 2.6
+        },
+
+        0: {
+            MAX_OFF: 5.1,
+            MAX_ON: 4.8,
+            MIN_AB_OFF: 3.4,
+            MIN_AB_ON: 3.0,
+            MIL_OFF: 2.8,
+            MIL_ON: 2.4
+        },
+
+        10: {
+            MAX_OFF: 4.7,
+            MAX_ON: 4.4,
+            MIN_AB_OFF: 3.1,
+            MIN_AB_ON: 2.7,
+            MIL_OFF: 2.5,
+            MIL_ON: 2.2
+        },
+
+        20: {
+            MAX_OFF: 4.2,
+            MAX_ON: 3.9,
+            MIN_AB_OFF: 2.8,
+            MIN_AB_ON: 2.4,
+            MIL_OFF: 2.2,
+            MIL_ON: 1.9
+        },
+
+        30: {
+            MAX_OFF: 3.8,
+            MAX_ON: 3.5,
+            MIN_AB_OFF: 2.4,
+            MIN_AB_ON: 2.2,
+            MIL_OFF: 1.9,
+            MIL_ON: 1.7
+        },
+
+        40: {
+            MAX_OFF: 3.3,
+            MAX_ON: null,
+            MIN_AB_OFF: 2.0,
+            MIN_AB_ON: null,
+            MIL_OFF: 1.5,
+            MIL_ON: null
+        },
+
+        50: {
+            MAX_OFF: 2.8,
+            MAX_ON: null,
+            MIN_AB_OFF: 1.7,
+            MIN_AB_ON: null,
+            MIL_OFF: 1.2,
+            MIL_ON: null
         }
 
     }

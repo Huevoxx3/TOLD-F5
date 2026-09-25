@@ -965,6 +965,79 @@ if (takeoffFactorResult.valid) {
 
 }
 
+// =================================================
+// FA23 — GRADIENTE DE ASCENSO
+// =================================================
+
+if (
+    takeoffFactorResult.valid &&
+    typeof window.calculateFA23Gradient === "function"
+) {
+
+    const gradientResult =
+        window.calculateFA23Gradient({
+
+            takeoffFactor:
+                takeoffFactorResult.factor,
+
+            pressureAltitude:
+                pa,
+
+            grossWeight:
+                grossWeight,
+
+            tailwind:
+                Math.max(
+                    0,
+                    wind.tailwind
+                )
+
+        });
+
+
+    if (gradientResult.valid) {
+
+        $("gradientRateOfClimb").textContent =
+            gradientResult.result.rateOfClimb.toFixed(0);
+
+
+        $("gradientPercent").textContent =
+            gradientResult.result.gradientPercent.toFixed(2);
+
+
+        $("gradientFtNm").textContent =
+            gradientResult.result.gradientFtNm.toFixed(0);
+
+    } else {
+
+        $("gradientRateOfClimb").textContent =
+            "PENDIENTE";
+
+
+        $("gradientPercent").textContent =
+            "PENDIENTE";
+
+
+        $("gradientFtNm").textContent =
+            "PENDIENTE";
+
+    }
+
+} else {
+
+    $("gradientRateOfClimb").textContent =
+        "PENDIENTE";
+
+
+    $("gradientPercent").textContent =
+        "PENDIENTE";
+
+
+    $("gradientFtNm").textContent =
+        "PENDIENTE";
+
+}
+
     // -------------------------------------------------
     // CALCULAR FA2-2
     // -------------------------------------------------
@@ -1055,7 +1128,57 @@ else {
 
 }
 
+// =================================================
+// FA2-3 — VER RECORRIDO
+// =================================================
 
+const gradientButton = $("viewGradientBtn");
+
+if (gradientButton) {
+
+    gradientButton.onclick = function () {
+
+        // Verificar que el Takeoff Factor sea válido
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir el recorrido de gradiente porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+        // Datos actuales del cálculo
+        const tof =
+            takeoffFactorResult.factor;
+
+        const gradientPA =
+            pa;
+
+        const gradientGW =
+            grossWeight;
+
+        const gradientTailwind =
+            Math.max(
+                0,
+                wind.tailwind
+            );
+
+        // Construir URL para el módulo de gradiente
+        const url =
+            "gradient/gradient-view.html" +
+            `?tof=${encodeURIComponent(tof)}` +
+            `&pa=${encodeURIComponent(gradientPA)}` +
+            `&gw=${encodeURIComponent(gradientGW)}` +
+            `&tailwind=${encodeURIComponent(gradientTailwind)}`;
+
+        // Abrir el recorrido
+        window.open(
+            url,
+            "_blank"
+        );
+    };
+}
 
 // -------------------------------------------------
 // MENSAJE DE ESTADO

@@ -378,23 +378,72 @@
                     A2-15 del RAYA-1
                 </p>
 
-        <div class="results-grid performance">
+<div class="results-grid performance">
 
-            <div>
+    <div>
 
-                <span>
-                    Takeoff Factor
-                </span>
+        <span>
+            Takeoff Factor
+        </span>
 
-                <strong id="takeoffFactor">
-                    —
-                </strong>
+        <strong id="takeoffFactor">
+            —
+        </strong>
 
-            
+    </div>
 
-            </div>
 
-        </div>
+    <div>
+
+        <span>
+            Rate of Climb
+        </span>
+
+        <strong id="gradientRateOfClimb">
+            —
+        </strong>
+
+        <small>
+            ft/min
+        </small>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Gradient
+        </span>
+
+        <strong id="gradientPercent">
+            —
+        </strong>
+
+        <small>
+            %
+        </small>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Climb Gradient
+        </span>
+
+        <strong id="gradientFtNm">
+            —
+        </strong>
+
+        <small>
+            ft/NM
+        </small>
+
+    </div>
+
+</div>
 
 <br>
 
@@ -499,7 +548,9 @@
 
         </div>
 
-
+<button id="viewGradientBtn" class="gradient-button">
+    VER RECORRIDO
+</button>
 
         <!-- ========================= -->
         <!-- TRAZABILIDAD -->
@@ -587,6 +638,10 @@
 
 
 <script src="fa22.js"></script>
+
+<script src="gradient/gradient-data.js"></script>
+<script src="gradient/gradient-engine.js"></script>
+
 <script src="app.js"></script>
 
 </body>

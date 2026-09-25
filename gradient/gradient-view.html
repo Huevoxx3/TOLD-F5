@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FA-23 — Análisis de Gradiente</title>
+  <link rel="stylesheet" href="gradient-view.css">
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1>FA-23 — ANÁLISIS DE GRADIENTE</h1>
+    <p>Recorrido sobre la carta digitalizada</p>
+  </div>
+  <div class="badge">PATAS NEGRAS</div>
+</header>
+
+<main class="layout">
+  <aside class="panel">
+    <section class="card">
+      <h2>DATOS DE ENTRADA</h2>
+
+      <label>Takeoff Factor
+        <input id="takeoffFactor" type="number" min="2" max="10" step="0.01" value="4.00">
+      </label>
+
+      <label>Pressure Altitude
+        <input id="pressureAltitude" type="number" min="0" max="8000" step="50" value="2500">
+        <small>0–8000 ft · valores intermedios permitidos</small>
+      </label>
+
+      <label>Gross Weight
+        <input id="grossWeight" type="number" min="10000" max="19000" step="50" value="10500">
+        <small>10.000–19.000 lb · valores intermedios permitidos</small>
+      </label>
+
+      <label>Tailwind
+        <input id="tailwind" type="number" min="0" max="40" step="0.1" value="7">
+        <small>0–40 kt</small>
+      </label>
+
+      <button id="calculateBtn" class="primary">CALCULAR RECORRIDO</button>
+    </section>
+
+    <section id="statusCard" class="card statusCard">
+      <div id="status">Listo para calcular.</div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2>RESULTADOS</h2>
+      <div class="result">
+        <span>Rate of Climb</span>
+        <strong id="roc">—</strong><small>ft/min</small>
+      </div>
+      <div class="result">
+        <span>Gradient</span>
+        <strong id="gradient">—</strong><small>%</small>
+      </div>
+      <div class="result">
+        <span>Climb Gradient</span>
+        <strong id="gradientFtNm">—</strong><small>ft/NM</small>
+      </div>
+    </section>
+
+    <section id="traceCard" class="card hidden">
+      <h2>TRAZABILIDAD</h2>
+      <div id="interpolationText" class="traceBlock"></div>
+      <ol id="trace"></ol>
+    </section>
+  </aside>
+
+  <section class="chartCard">
+    <div class="chartHeader">
+      <div>
+        <h2>CARTA FA-23</h2>
+        <span>Escala original: 606 × 792 px</span>
+      </div>
+      <button id="resetBtn" class="secondary">RESTABLECER</button>
+    </div>
+
+    <div class="chartViewport">
+      <div class="chartStage">
+        <img src="FA23-Gradiente.png" alt="Carta FA-23 Gradiente">
+        <svg id="overlay" viewBox="0 0 606 792" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="gradient-data.js"></script>
+<script src="gradient-engine.js"></script>
+<script>
+(function () {
+
+  const $ = id => document.getElementById(id);
+  const overlay = $("overlay");
+
+  function svgEl(name, attrs = {}) {
+    const el = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      name
+    );
+
+    Object.entries(attrs).forEach(([k, v]) =>
+      el.setAttribute(k, v)
+    );
+
+    return el;
+  }
+
+  function line(x1, y1, x2, y2, cls, extra = {}) {
+
+    const el = svgEl("line", {
+      x1,
+      y1,
+      x2,
+      y2,
+      class: cls,
+      ...extra
+    });
+
+    overlay.appendChild(el);
+
+    return el;
+  }
+
+  function circle(x, y, cls, r = 4, extra = {}) {
+
+    const el = svgEl("circle", {
+      cx: x,
+      cy: y,
+      r,
+      class: cls,
+      ...extra
+    });
+
+    overlay.appendChild(el);
+
+    return el;
+  }
+
+  function label(x, y, text, cls = "pathLabel") {
+
+    const el = svgEl("text", {
+      x,
+      y,
+      class: cls
+    });
+
+    el.textContent = text;
+
+    overlay.appendChild(el);
+  }
+
+
+  // =================================================
+  // DIBUJAR RECORRIDO
+  // =================================================
+
+  function drawResult(r) {
+
+    overlay.innerHTML = "";
+
+    const p = r.path;
+
+
+    // TOF → PA
+    line(
+      p.takeoffFactor.x,
+      240,
+      p.takeoffFactor.x,
+      p.takeoffFactor.y,
+      "pathVertical"
+    );
+
+    circle(
+      p.takeoffFactor.x,
+      p.takeoffFactor.y,
+      "point",
+      5
+    );
+
+    label(
+      p.takeoffFactor.x + 7,
+      p.takeoffFactor.y - 8,
+      "PA"
+    );
+
+
+    // PA → GW
+    line(
+      p.pressureAltitude.result.x,
+      p.pressureAltitude.result.y,
+      p.grossWeight.result.x,
+      p.grossWeight.result.y,
+      "pathHorizontal"
+    );
+
+
+    // GW → Reference
+    line(
+      p.grossWeight.result.x,
+      p.grossWeight.result.y,
+      p.referenceCurve.x,
+      p.referenceCurve.y,
+      "pathVertical"
+    );
+
+
+    // Reference → Baseline
+    line(
+      p.referenceCurve.x,
+      p.referenceCurve.y,
+      p.baseline.x,
+      p.baseline.y,
+      "pathHorizontal"
+    );
+
+
+    // Baseline → Guideline
+    line(
+      p.baseline.x,
+      p.baseline.y,
+      p.guideline.atBaseline.x,
+      p.guideline.atBaseline.y,
+      "pathGuide"
+    );
+
+
+    // Guideline → Tailwind
+    line(
+      p.guideline.atBaseline.x,
+      p.guideline.atBaseline.y,
+      p.guideline.atTailwind.x,
+      p.guideline.atTailwind.y,
+      "pathGuide"
+    );
+
+
+    // Tailwind → Gradient %
+    line(
+      p.guideline.atTailwind.x,
+      p.guideline.atTailwind.y,
+      p.gradientPercent.x,
+      p.gradientPercent.y,
+      "pathHorizontal"
+    );
+
+
+    // Tailwind → ft/NM
+    line(
+      p.guideline.atTailwind.x,
+      p.guideline.atTailwind.y,
+      p.gradientFtNm.x,
+      p.gradientFtNm.y,
+      "pathHorizontal"
+    );
+
+
+    [
+      [p.takeoffFactor.x, p.takeoffFactor.y, "TOF"],
+      [p.grossWeight.x, p.grossWeight.y, "GW"],
+      [p.referenceCurve.x, p.referenceCurve.y, "REF"],
+      [p.baseline.x, p.baseline.y, "BASE"],
+      [p.guideline.atTailwind.x, p.guideline.atTailwind.y, "TW"],
+      [p.gradientPercent.x, p.gradientPercent.y, "G%"],
+      [p.gradientFtNm.x, p.gradientFtNm.y, "ft/NM"]
+    ].forEach(([x, y, t]) => {
+
+      circle(
+        x,
+        y,
+        "point",
+        5
+      );
+
+      label(
+        x + 7,
+        y - 7,
+        t
+      );
+
+    });
+
+
+    // PA interpolada
+    if (
+      Math.abs(
+        p.pressureAltitude.lower.y -
+        p.pressureAltitude.upper.y
+      ) > 0.2
+    ) {
+
+      circle(
+        p.pressureAltitude.lower.x,
+        p.pressureAltitude.lower.y,
+        "helperPoint",
+        3
+      );
+
+      circle(
+        p.pressureAltitude.upper.x,
+        p.pressureAltitude.upper.y,
+        "helperPoint",
+        3
+      );
+
+      line(
+        p.pressureAltitude.lower.x,
+        p.pressureAltitude.lower.y,
+        p.pressureAltitude.upper.x,
+        p.pressureAltitude.upper.y,
+        "helperLine"
+      );
+
+    }
+
+
+    // GW interpolado
+    if (
+      Math.abs(
+        p.grossWeight.lower.x -
+        p.grossWeight.upper.x
+      ) > 0.2
+    ) {
+
+      circle(
+        p.grossWeight.lower.x,
+        p.grossWeight.lower.y,
+        "helperPoint",
+        3
+      );
+
+      circle(
+        p.grossWeight.upper.x,
+        p.grossWeight.upper.y,
+        "helperPoint",
+        3
+      );
+
+    }
+
+  }
+
+
+  // =================================================
+  // MOSTRAR RESULTADO
+  // =================================================
+
+  function render(r) {
+
+    $("resultCard")
+      .classList
+      .remove("hidden");
+
+    $("traceCard")
+      .classList
+      .remove("hidden");
+
+
+    $("roc").textContent =
+      r.result.rateOfClimb.toFixed(0);
+
+
+    $("gradient").textContent =
+      r.result.gradientPercent.toFixed(2);
+
+
+    $("gradientFtNm").textContent =
+      r.result.gradientFtNm.toFixed(0);
+
+
+    const pa =
+      r.interpolation.pressureAltitude;
+
+    const gw =
+      r.interpolation.grossWeight;
+
+
+    $("interpolationText").innerHTML =
+
+      `<b>PA:</b> ${
+        pa.lower === pa.upper
+          ? `${pa.lower} ft`
+          : `${pa.lower} ↔ ${pa.upper} ft · ${(pa.fraction * 100).toFixed(1)}%`
+      }<br>` +
+
+      `<b>GW:</b> ${
+        gw.lower === gw.upper
+          ? `${gw.lower.toLocaleString()} lb`
+          : `${gw.lower.toLocaleString()} ↔ ${gw.upper.toLocaleString()} lb · ${(gw.fraction * 100).toFixed(1)}%`
+      }<br>` +
+
+      `<b>Guideline:</b> #${r.path.guideline.number}`;
+
+
+    const items = [
+
+      `TOF → PA: ${r.inputs.takeoffFactor.toFixed(2)} → PA ${r.inputs.pressureAltitude.toFixed(0)} ft`,
+
+      `PA → Gross Weight: ${r.inputs.grossWeight.toFixed(0)} lb`,
+
+      `Rate of Climb: ${r.result.rateOfClimb.toFixed(0)} ft/min`,
+
+      `Reference Curve: intersección en X ${r.path.referenceCurve.x.toFixed(2)}`,
+
+      `Baseline: X ${r.path.baseline.x.toFixed(2)}`,
+
+      `Guideline seleccionada: #${r.path.guideline.number}`,
+
+      `Tailwind: ${r.inputs.tailwind.toFixed(1)} kt`,
+
+      `Gradient: ${r.result.gradientPercent.toFixed(2)} %`,
+
+      `Climb Gradient: ${r.result.gradientFtNm.toFixed(0)} ft/NM`
+
+    ];
+
+
+    $("trace").innerHTML =
+      items
+        .map(x => `<li>${x}</li>`)
+        .join("");
+
+
+    $("status").className = "ok";
+
+    $("status").textContent =
+      "✓ RECORRIDO CALCULADO — datos dentro del rango digitalizado.";
+
+
+    drawResult(r);
+
+  }
+
+
+  // =================================================
+  // CALCULAR
+  // =================================================
+
+  function calculateGradient() {
+
+    const result =
+      window.calculateFA23Gradient({
+
+        takeoffFactor:
+          $("takeoffFactor").value,
+
+        pressureAltitude:
+          $("pressureAltitude").value,
+
+        grossWeight:
+          $("grossWeight").value,
+
+        tailwind:
+          $("tailwind").value
+
+      });
+
+
+    if (!result.valid) {
+
+      overlay.innerHTML = "";
+
+      $("resultCard")
+        .classList
+        .add("hidden");
+
+      $("traceCard")
+        .classList
+        .add("hidden");
+
+      $("status").className = "error";
+
+      $("status").textContent =
+        "✕ " + result.message;
+
+      return false;
+
+    }
+
+
+    render(result);
+
+    return true;
+
+  }
+
+
+  // =================================================
+  // BOTÓN CALCULAR MANUAL
+  // =================================================
+
+  $("calculateBtn")
+    .addEventListener(
+      "click",
+      calculateGradient
+    );
+
+
+  // =================================================
+  // BOTÓN RESET
+  // =================================================
+
+  $("resetBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        overlay.innerHTML = "";
+
+        $("resultCard")
+          .classList
+          .add("hidden");
+
+        $("traceCard")
+          .classList
+          .add("hidden");
+
+        $("status").className = "";
+
+        $("status").textContent =
+          "Listo para calcular.";
+
+      }
+    );
+
+
+  // =================================================
+  // DATOS ENVIADOS DESDE TOLD
+  // =================================================
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const tof =
+    params.get("tof");
+
+  const pa =
+    params.get("pa");
+
+  const gw =
+    params.get("gw");
+
+  const tailwind =
+    params.get("tailwind");
+
+
+  // Si TOLD envió los datos,
+  // cargarlos automáticamente.
+  if (
+    tof !== null &&
+    pa !== null &&
+    gw !== null &&
+    tailwind !== null
+  ) {
+
+    $("takeoffFactor").value =
+      tof;
+
+    $("pressureAltitude").value =
+      pa;
+
+    $("grossWeight").value =
+      gw;
+
+    $("tailwind").value =
+      tailwind;
+
+
+    // Ejecutar automáticamente
+    calculateGradient();
+
+  }
+
+})();
+</script>
+</body>
+</html>
