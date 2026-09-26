@@ -347,6 +347,74 @@ Object.entries(aerodromes).forEach(
 
 const runwaySelect = $("runway");
 
+const runwayConditionSelect =
+    $("runwayCondition");
+
+const rcrInput =
+    $("rcr");
+
+function updateRunwayCondition() {
+
+    const condition =
+        runwayConditionSelect.value;
+
+    // -------------------------------------------------
+    // VALORES RCR SEGÚN CONDICIÓN DE PISTA
+    // -------------------------------------------------
+
+    const fixedRCR = {
+
+        DRY: 23,
+
+        WET: 12,
+
+        ICY: 5,
+
+        ICY_GLAZED: 2
+
+    };
+
+
+    // -------------------------------------------------
+    // CONDICIÓN CON RCR FIJO
+    // -------------------------------------------------
+
+    if (
+        Object.prototype.hasOwnProperty.call(
+            fixedRCR,
+            condition
+        )
+    ) {
+
+        rcrInput.value =
+            fixedRCR[condition];
+
+        rcrInput.disabled = true;
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // RCR MANUAL
+    // -------------------------------------------------
+
+    if (condition === "MANUAL") {
+
+        rcrInput.disabled = false;
+
+        return;
+    }
+
+}
+
+runwayConditionSelect.addEventListener(
+    "change",
+    updateRunwayCondition
+);
+
+updateRunwayCondition();
+
 aerodromeSelect.addEventListener(
     "change",
     function () {
@@ -811,7 +879,18 @@ function calculate() {
             $("cg").value
         );
 
+        const runwayCondition =
+    $("runwayCondition").value;
 
+const rcr =
+    Number(
+        $("rcr").value
+    );
+
+    console.log("PISTA:", {
+    condicion: runwayCondition,
+    rcr: rcr
+});
 
     // -------------------------------------------------
     // ALTITUD DE PRESIÓN
@@ -1104,9 +1183,86 @@ if (
 
 }
 
-    // -------------------------------------------------
-    // CALCULAR FA2-2
-    // -------------------------------------------------
+// =================================================
+// FA23 — CRITICAL FIELD LENGTH
+// =================================================
+
+const cflElement =
+    $("cflResult");
+
+if (
+    cflElement &&
+    takeoffFactorResult.valid &&
+    typeof window.calculateFA23CFL === "function"
+) {
+
+    try {
+
+        const cflResult =
+            window.calculateFA23CFL({
+
+                takeoffFactor:
+                    takeoffFactorResult.factor,
+
+                grossWeight:
+                    grossWeight,
+
+                cg:
+                    cg,
+
+                headwind:
+                    Math.max(
+                        0,
+                        wind.headwind
+                    ),
+
+                tailwind:
+                    Math.max(
+                        0,
+                        wind.tailwind
+                    ),
+
+                rcr:
+                    rcr
+
+            });
+
+
+        if (cflResult.valid) {
+
+            cflElement.textContent =
+                cflResult.result.cflFt
+                    .toLocaleString("es-ES");
+
+        } else {
+
+            cflElement.textContent =
+                "PENDIENTE";
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error calculando CFL:",
+            error
+        );
+
+        cflElement.textContent =
+            "PENDIENTE";
+
+    }
+
+} else {
+
+    if (cflElement) {
+
+        cflElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
 
 // =================================================
 // FA2-2 — TAKEOFF SPEED
@@ -1289,6 +1445,82 @@ if (setosButton) {
             `&cg=${encodeURIComponent(setosCG)}`;
 
         // Abrir el recorrido
+        window.open(
+            url,
+            "_blank"
+        );
+    };
+}
+
+// =================================================
+// FA23 — CFL — VER RECORRIDO
+// =================================================
+
+const cflButton = $("cflBtn");
+
+if (cflButton) {
+
+    cflButton.onclick = function () {
+
+        // Verificar que el Takeoff Factor sea válido
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir la tabla CFL porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+        // -------------------------------------------------
+        // DATOS ACTUALES DEL TOLD
+        // -------------------------------------------------
+
+        const cflTOF =
+            takeoffFactorResult.factor;
+
+        const cflGW =
+            grossWeight;
+
+        const cflCG =
+            cg;
+
+        const cflRCR =
+    rcr;
+
+        // -------------------------------------------------
+        // DETERMINAR COMPONENTE DE VIENTO
+        // -------------------------------------------------
+
+        const headwind =
+            Math.max(
+                0,
+                wind.headwind
+            );
+
+        const tailwind =
+            Math.max(
+                0,
+                wind.tailwind
+            );
+
+        // -------------------------------------------------
+        // CONSTRUIR URL
+        // -------------------------------------------------
+
+        const url =
+            "CFL/cfl-view.html" +
+            `?tof=${encodeURIComponent(cflTOF)}` +
+            `&gw=${encodeURIComponent(cflGW)}` +
+            `&cg=${encodeURIComponent(cflCG)}` +
+`&rcr=${encodeURIComponent(cflRCR)}` +
+`&headwind=${encodeURIComponent(headwind)}` +
+            `&tailwind=${encodeURIComponent(tailwind)}`;
+
+        // -------------------------------------------------
+        // ABRIR RECORRIDO
+        // -------------------------------------------------
+
         window.open(
             url,
             "_blank"

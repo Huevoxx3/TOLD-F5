@@ -28,67 +28,112 @@
 <main class="container">
 
 
-    <!-- ===================================================== -->
-    <!-- A) AERÓDROMO -->
-    <!-- ===================================================== -->
+ <!-- ===================================================== -->
+<!-- A) AERÓDROMO -->
+<!-- ===================================================== -->
 
-    <section class="card">
+<section class="card">
 
-        <h2>1. AERÓDROMO</h2>
+    <h2>1. AERÓDROMO</h2>
 
-        <div class="grid">
+    <div class="grid">
 
-            <label>
-                Aeródromo
+        <label>
+            Aeródromo
 
-                <select id="aerodrome">
-                </select>
-            </label>
-
-
-            <label>
-                Pista
-
-                <select id="runway">
-                </select>
-            </label>
+            <select id="aerodrome">
+            </select>
+        </label>
 
 
-            <label>
-                Elevación
+        <label>
+            Pista
 
-                <div class="input-unit">
-
-                    <strong id="elevation">
-                        —
-                    </strong>
-
-                
-
-                </div>
-            </label>
+            <select id="runway">
+            </select>
+        </label>
 
 
-            <label>
-                Longitud de pista
+        <label>
+            Elevación
 
-                <div class="input-unit">
+            <div class="input-unit">
 
-                    <strong id="runwayLength">
-                        —
-                    </strong>
+                <strong id="elevation">
+                    —
+                </strong>
 
-                  
-
-                </div>
-            </label>
-
-        </div>
-
-    </section>
+            </div>
+        </label>
 
 
+        <label>
+            Longitud de pista
 
+            <div class="input-unit">
+
+                <strong id="runwayLength">
+                    —
+                </strong>
+
+            </div>
+        </label>
+
+
+        <!-- ================================================= -->
+        <!-- CONDICIÓN DE PISTA -->
+        <!-- ================================================= -->
+
+        <label>
+            Condición de pista
+
+<select id="runwayCondition">
+
+    <option value="DRY">
+        SECA
+    </option>
+
+    <option value="WET">
+        MOJADA
+    </option>
+
+    <option value="ICY">
+        ICY
+    </option>
+
+    <option value="ICY_GLAZED">
+        ICY (GLAZED)
+    </option>
+
+    <option value="MANUAL">
+        RCR MANUAL
+    </option>
+
+</select>
+        </label>
+
+
+        <!-- ================================================= -->
+        <!-- RCR -->
+        <!-- ================================================= -->
+
+<label>
+    RCR
+
+    <input
+        type="number"
+        id="rcr"
+        min="0"
+        max="23"
+        step="1"
+        placeholder="—"
+    >
+
+</label>
+
+    </div>
+
+</section>
     <!-- ===================================================== -->
     <!-- B) WX -->
     <!-- ===================================================== -->
@@ -371,12 +416,7 @@
         <!-- FA2-3 -->
         <!-- ========================= -->
 
-        <h3>
-            FA2-3 — Takeoff Factor
-        </h3>
-<p class="muted">
-                    A2-15 del RAYA-1
-                </p>
+
 
 <div class="results-grid performance">
 
@@ -396,7 +436,7 @@
     <div>
 
         <span>
-            Rate of Climb
+            Rate of Climb - Single Engine
         </span>
 
         <strong id="gradientRateOfClimb">
@@ -413,7 +453,7 @@
     <div>
 
         <span>
-            Gradient
+            Gradient - Single Engine
         </span>
 
         <strong id="gradientPercent">
@@ -430,7 +470,7 @@
     <div>
 
         <span>
-            Climb Gradient
+            Climb Gradient - Single Engine
         </span>
 
         <strong id="gradientFtNm">
@@ -442,20 +482,20 @@
         </small>
 
     </div>
-<div>
 
+
+<div>
     <span>
-        Single Engine Takeoff Speed
+        Critical Field Length - No Drag Chute
     </span>
 
-    <strong id="setos">
+    <strong id="cflResult">
         —
     </strong>
 
     <small>
-        KIAS
+        ft
     </small>
-
 </div>
 </div>
 <br>
@@ -469,13 +509,9 @@
 
             <div>
 
-                <h3>
-                    FA2-2 — Takeoff Speed
-                </h3>
-
-                <p class="muted">
-                    A2-14 del RAYA-1
-                </p>
+                <h2>
+                  Takeoff Speed
+                </h2>
 
             </div>
 
@@ -553,6 +589,22 @@
 
             </div>
 
+            <div>
+
+    <span>
+        Single Engine Takeoff Speed
+    </span>
+
+    <strong id="setos">
+        —
+    </strong>
+
+    <small>
+        KIAS
+    </small>
+
+</div>
+
         </div>
 
 <br>
@@ -563,9 +615,9 @@
 
 <div class="section-title">
     <div>
-        <h3>TABLAS</h3>
+        <h2>5. TABLAS</h2>
         <p class="muted">
-            Recorridos de las tablas de performance
+            Haga clicl para ver el analisis en las tablas de performance
         </p>
     </div>
 </div>
@@ -576,15 +628,17 @@
         id="viewGradientBtn"
         class="secondary"
     >
-        TABLA GRADIENTE
+        S-E Climb Gradiente - Gear Down <br> FA2-7
     </button>
 
     <button
         id="setosBtn"
         class="secondary"
     >
-        TABLA SETOS
+        Single Engine Takeoff Speed <br> FA2-6
     </button>
+
+    <button id="cflBtn" class="secondary">Critical Field Length - No Drag Chute <br> FA2-8</button>
 
 </div>
 
@@ -678,6 +732,10 @@
 <script src="gradient/gradient-data.js"></script>
 <script src="gradient/gradient-engine.js"></script>
 <script src="setos/setos-engine.js"></script>
+<script src="DATA/FA23-CFL-NoDragChute.js"></script>
+<script src="CFL/cfl-engine.js"></script>
+
+
 <script src="app.js"></script>
 
 </body>
