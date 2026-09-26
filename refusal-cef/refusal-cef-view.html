@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FA-23 — Refusal / CEF</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#101820;color:#eef4f7}.app{display:grid;grid-template-columns:350px 1fr;height:100vh}.panel{padding:18px;background:#111c24;border-right:1px solid #344753;overflow:auto}h1{font-size:18px;margin:0 0 4px}.sub{font-size:12px;color:#91a7b5;margin-bottom:18px}h2{font-size:12px;color:#a8c2d3;letter-spacing:.08em;border-bottom:1px solid #344753;padding-bottom:8px;margin-top:20px}.card{margin-top:10px;padding:12px;border:1px solid #344753;border-radius:7px;background:#14222b}.small{font-size:11px;line-height:1.5;color:#a9bbc5}.result{font-size:25px;font-weight:bold;margin-top:4px}.ok{color:#7ee2ad}.error{color:#ff9696}.value{font-size:15px;font-weight:bold}.viewport{overflow:auto;background:#26333b;padding:20px}.stage{position:relative;width:729px;height:852px;background:#fff}.stage img,.stage svg{position:absolute;inset:0;width:729px;height:852px}.stage svg{pointer-events:none}.path{
+    stroke:#e51616;
+    stroke-width:3;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.cef-path{
+    stroke:#1687e5;
+    stroke-width:3;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}.point{fill:#ff304f;stroke:#fff;stroke-width:1.5}.text{font:700 13px Arial;fill:#ff304f;paint-order:stroke;stroke:#fff;stroke-width:3px}@media(max-width:850px){.app{grid-template-columns:1fr;height:auto}.viewport{height:80vh}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="panel">
+<h1>FA-23 — TABLA DE PERFORMANCE</h1>
+<div class="sub">REFUSAL SPEED / CRITICAL ENGINE FAILURE SPEED</div>
+
+<h2>DATOS RECIBIDOS DEL TOLD</h2>
+<div class="card small">TOF<br><span class="value" id="tof">—</span></div>
+<div class="card small">GROSS WEIGHT<br><span class="value" id="gw">—</span> lb</div>
+<div class="card small">CRITICAL FIELD LENGTH<br><span class="value" id="cfl">—</span> ft</div>
+<div class="card small">RCR<br><span class="value" id="rcr">—</span></div>
+<div class="card small">RUNWAY LENGTH<br><span class="value" id="runway">—</span> ft</div>
+
+<div class="card"><div class="small">REFUSAL SPEED</div><div class="result" id="refusal">—</div></div>
+<div class="card"><div class="small">CRITICAL ENGINE FAILURE SPEED</div><div class="result" id="cef">—</div></div>
+<div class="card small" id="status">Cargando tabla...</div>
+<div class="card small" id="steps">—</div>
+</aside>
+
+<main class="viewport"><div class="stage"><img src="../DATA/FA23-CFL-Refusal-CEF.png" alt="FA-23 Refusal Speed / Critical Engine Failure Speed"><svg id="svg" viewBox="0 0 729 852"></svg></div></main>
+</div>
+
+<script src="../DATA/FA23-CFL-Refusal-CEF-digitalizacion.json" type="application/json" id="digitalization"></script>
+<script src="refusal-cef-engine.js"></script>
+<script>
+(async function(){
+  const q=new URLSearchParams(location.search);
+  const dataUrl="../DATA/FA23-CFL-Refusal-CEF-digitalizacion.json";
+  const status=document.getElementById('status');
+  try{
+    const data=await fetch(dataUrl).then(r=>{if(!r.ok)throw new Error('No se pudo cargar la digitalización.');return r.json();});
+const input={
+  tof:Number(q.get('tof')),
+  grossWeight:Number(q.get('gw')),
+  cflFt:Number(q.get('cfl')),
+  rcr:Number(q.get('rcr')),
+  runwayLengthFt:Number(q.get('runwayLength'))
+};
+    document.getElementById('tof').textContent=input.tof.toFixed(2);
+    document.getElementById('gw').textContent=Math.round(input.grossWeight).toLocaleString('es-ES');
+    document.getElementById('cfl').textContent=Math.round(input.cflFt).toLocaleString('es-ES');
+    document.getElementById('runway').textContent =
+    Math.round(input.runwayLengthFt).toLocaleString('es-ES');
+    document.getElementById('rcr').textContent=input.rcr.toFixed(0);
+
+    const result=window.FA23RefusalCEF.calculate(data,input);
+    if(!result.valid){status.textContent='✗ '+result.message;status.className='card small error';return;}
+
+    const svg=document.getElementById('svg');
+function drawPath(path, className){
+  for(let i=0;i<path.length-1;i++){
+    const a=path[i],b=path[i+1];
+
+    const l=document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'line'
+    );
+
+    l.setAttribute('x1',a.x);
+    l.setAttribute('y1',a.y);
+    l.setAttribute('x2',b.x);
+    l.setAttribute('y2',b.y);
+    l.setAttribute('class',className);
+
+    svg.appendChild(l);
+  }
+}
+
+drawPath(result.refusalPath,'path');
+drawPath(result.cefPath,'cef-path');
+    Object.entries(result.points).forEach(([name,p])=>{
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',5);c.setAttribute('class','point');svg.appendChild(c);
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',p.x+8);t.setAttribute('y',p.y-8);t.setAttribute('class','text');t.textContent=name==='rwyCfl'?'CFL':name==='grossWeight'?'GW':name==='refusalSpeed'?'Vref':name==='cefSpeed'?'Vcef':'TOF';svg.appendChild(t);
+    });
+
+    document.getElementById('refusal').textContent=result.result.refusalSpeed.toFixed(1)+' KIAS';
+    document.getElementById('cef').textContent=result.result.criticalEngineFailureSpeed.toFixed(1)+' KIAS';
+    status.textContent='✓ Recorrido calculado';status.className='card small ok';
+    document.getElementById('steps').innerHTML='TOF '+input.tof.toFixed(2)+' → GW '+Math.round(input.grossWeight).toLocaleString('es-ES')+' lb<br>RWY CFL '+Math.round(input.cflFt).toLocaleString('es-ES')+' ft → RCR '+input.rcr.toFixed(0)+'<br>REFUSAL SPEED → '+result.result.refusalSpeed.toFixed(1)+' KIAS<br>CRITICAL ENGINE FAILURE SPEED → '+result.result.criticalEngineFailureSpeed.toFixed(1)+' KIAS';
+  }catch(e){status.textContent='✗ '+e.message;status.className='card small error';}
+})();
+</script>
+</body>
+</html>
