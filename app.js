@@ -1340,7 +1340,7 @@ const refusalRunwayLength =
 
         const response =
             await fetch(
-                "DATA/FA23-CFL-Refusal-CEF-digitalizacion.json"
+                "data/FA23-CFL-Refusal-CEF-digitalizacion.json"
             );
 
         if (!response.ok) {
