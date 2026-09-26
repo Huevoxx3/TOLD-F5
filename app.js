@@ -1700,7 +1700,7 @@ if (cflButton) {
         // -------------------------------------------------
 
         const url =
-            "CFL/cfl-view.html" +
+            "cfl/cfl-view.html" +
             `?tof=${encodeURIComponent(cflTOF)}` +
             `&gw=${encodeURIComponent(cflGW)}` +
             `&cg=${encodeURIComponent(cflCG)}` +

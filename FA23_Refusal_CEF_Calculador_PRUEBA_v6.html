@@ -24,7 +24,28 @@ button{margin-top:12px;background:#2377a6;cursor:pointer;font-weight:bold}
 .point{fill:#ff304f;stroke:#fff;stroke-width:1.5}
 .construct{stroke:#1686ff;stroke-width:2;stroke-dasharray:7 5;fill:none}
 .text{font:700 13px Arial;fill:#ff304f;paint-order:stroke;stroke:#fff;stroke-width:3px}
-@media(max-width:850px){.app{grid-template-columns:1fr;height:auto}.viewport{height:80vh}}
+@media(max-width:850px){
+    .app{
+        grid-template-columns:1fr;
+        height:auto;
+    }
+
+    .panel{
+        border-right:none;
+        border-bottom:1px solid #344753;
+    }
+
+    .viewport{
+        height:auto;
+        min-height:80vh;
+        padding:12px;
+    }
+
+    .stage{
+        width:100%;
+        max-width:729px;
+    }
+}
 </style>
 </head>
 <body>

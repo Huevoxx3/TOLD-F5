@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FA-23 — Refusal / CEF</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#101820;color:#eef4f7}.app{display:grid;grid-template-columns:350px 1fr;height:100vh}.panel{padding:18px;background:#111c24;border-right:1px solid #344753;overflow:auto}h1{font-size:18px;margin:0 0 4px}.sub{font-size:12px;color:#91a7b5;margin-bottom:18px}h2{font-size:12px;color:#a8c2d3;letter-spacing:.08em;border-bottom:1px solid #344753;padding-bottom:8px;margin-top:20px}.card{margin-top:10px;padding:12px;border:1px solid #344753;border-radius:7px;background:#14222b}.small{font-size:11px;line-height:1.5;color:#a9bbc5}.result{font-size:25px;font-weight:bold;margin-top:4px}.ok{color:#7ee2ad}.error{color:#ff9696}.value{font-size:15px;font-weight:bold}.viewport{overflow:auto;background:#26333b;padding:20px}.stage{position:relative;width:729px;height:852px;background:#fff}.stage img,.stage svg{position:absolute;inset:0;width:729px;height:852px}.stage svg{pointer-events:none}.path{
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#101820;color:#eef4f7}.app{display:grid;grid-template-columns:350px 1fr;height:100vh}.panel{padding:18px;background:#111c24;border-right:1px solid #344753;overflow:auto}h1{font-size:18px;margin:0 0 4px}.sub{font-size:12px;color:#91a7b5;margin-bottom:18px}h2{font-size:12px;color:#a8c2d3;letter-spacing:.08em;border-bottom:1px solid #344753;padding-bottom:8px;margin-top:20px}.card{margin-top:10px;padding:12px;border:1px solid #344753;border-radius:7px;background:#14222b}.small{font-size:11px;line-height:1.5;color:#a9bbc5}.result{font-size:25px;font-weight:bold;margin-top:4px}.ok{color:#7ee2ad}.error{color:#ff9696}.value{font-size:15px;font-weight:bold}.viewport{
+    overflow:auto;
+    background:#26333b;
+    padding:20px;
+}
+
+.stage{
+    position:relative;
+    width:min(729px, 100%);
+    aspect-ratio:729 / 852;
+    height:auto;
+    margin:0 auto;
+    background:#fff;
+}
+
+.stage img,
+.stage svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}.stage svg{pointer-events:none}.path{
     stroke:#e51616;
     stroke-width:3;
     fill:none;

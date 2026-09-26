@@ -28,15 +28,71 @@ button:hover{background:#1d3340}.primary{width:100%;background:#176b52;border-co
 .workspace{display:flex;flex-direction:column;min-width:0;height:100%}
 .toolbar{height:54px;flex:0 0 54px;display:flex;align-items:center;gap:7px;padding:8px 12px;background:#111c24;border-bottom:1px solid #30424e}
 .toolbar button{padding:7px 10px}.zoom{font-weight:bold;min-width:55px;text-align:center}.spacer{flex:1}.hint{font-size:11px;color:#8299a8}
-.viewport{flex:1;overflow:auto;background:#28343c;padding:18px}
-.stage{position:relative;display:inline-block;width:721px;height:760px;transform-origin:top left}
-.stage img{position:absolute;width:721px;height:760px;left:0;top:0;user-select:none;-webkit-user-drag:none}
-svg{position:absolute;left:0;top:0;width:721px;height:760px;pointer-events:none;overflow:visible}
+.viewport{
+    flex:1;
+    overflow:auto;
+    background:#28343c;
+    padding:18px;
+}
+
+.stage{
+    position:relative;
+    display:inline-block;
+    width:721px;
+    height:760px;
+    transform-origin:top left;
+}
+
+.stage img{
+    position:absolute;
+    width:721px;
+    height:760px;
+    left:0;
+    top:0;
+    user-select:none;
+    -webkit-user-drag:none;
+}
+
+svg{
+    position:absolute;
+    left:0;
+    top:0;
+    width:721px;
+    height:760px;
+    pointer-events:none;
+    overflow:visible;
+}
 .path{stroke:#ff3030;stroke-width:2.5;fill:none}
 .helper{stroke:#ff3030;stroke-width:1.3;stroke-dasharray:5 4;fill:none}
 .pt{fill:#ff3030;stroke:#fff;stroke-width:1.5}
 .pt2{fill:#176b52;stroke:#fff;stroke-width:1.5}
 .text{font-size:12px;font-weight:bold;fill:#111;paint-order:stroke;stroke:#fff;stroke-width:3px}
+@media(max-width:900px){
+
+    .app{
+        grid-template-columns:1fr;
+        height:100%;
+    }
+
+    .sidebar{
+        max-height:45vh;
+        border-right:none;
+        border-bottom:1px solid #30424e;
+    }
+
+    .workspace{
+        min-height:55vh;
+    }
+
+    .hint{
+        display:none;
+    }
+
+    .viewport{
+        padding:8px;
+    }
+
+}
 </style>
 </head>
 <body>
@@ -214,8 +270,48 @@ $("calc").onclick=run;
 $("plus").onclick=()=>setZoom(zoom*1.25);
 $("minus").onclick=()=>setZoom(zoom/1.25);
 $("reset").onclick=()=>{setZoom(1);viewport.scrollLeft=0;viewport.scrollTop=0};
-function setZoom(z){zoom=Math.max(.5,Math.min(3,z));stage.style.transform="scale("+zoom+")";stage.style.transformOrigin="top left";$("zoom").textContent=Math.round(zoom*100)+"%";}
+function setZoom(z){
+
+    zoom=Math.max(.5,Math.min(3,z));
+
+    stage.style.transform =
+        "scale("+zoom+")";
+
+    stage.style.transformOrigin =
+        "top left";
+
+    $("zoom").textContent =
+        Math.round(zoom*100)+"%";
+}
+function fitToViewport(){
+
+    if(window.innerWidth <= 900){
+
+        const availableWidth =
+            viewport.clientWidth - 16;
+
+        const fitZoom =
+            Math.min(
+                1,
+                availableWidth / 721
+            );
+
+        setZoom(fitZoom);
+
+    }else{
+
+        setZoom(1);
+
+    }
+}
+
 $("chart").src=IMG;
+window.addEventListener(
+    "resize",
+    fitToViewport
+);
+
+fitToViewport();
 loadFromQuery();
 run();
 </script>
