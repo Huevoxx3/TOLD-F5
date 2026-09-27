@@ -1018,7 +1018,7 @@ const antiIce =
         : "OFF";
 
 const takeoffFactorResult =
-    calculateTakeoffFactor(
+    FA23Digital.calculateTakeoffFactor(
         temperature,
         pa,
         thrust,
@@ -1456,41 +1456,75 @@ updateMainRefusalCEF();
 }
 
 // =================================================
-// FA2-2 — TAKEOFF SPEED
+// FA23 — TAKEOFF PERFORMANCE — NUEVO MOTOR DIGITAL
 // =================================================
 
-const takeoffResult =
-calculateTakeoffSpeed(
-    grossWeight / 1000,
-    cg
-);
+// -------------------------------------------------
+// TAKEOFF SPEED
+// -------------------------------------------------
 
+const takeoffResult =
+    FA23Digital.calculateTakeoffSpeed(
+        grossWeight,
+        cg
+    );
+
+
+// -------------------------------------------------
+// OCS
+// -------------------------------------------------
+
+const obstacleResult =
+    FA23Digital.calculateObstacleClearanceSpeed(
+        grossWeight,
+        cg
+    );
+
+
+// -------------------------------------------------
+// TIRE LIMIT
+// -------------------------------------------------
+
+const tireResult =
+    FA23Digital.calculateTireLimitSpeed(
+        temperature,
+        pa
+    );
+
+
+// =================================================
+// MOSTRAR TAKEOFF SPEED
+// =================================================
 
 if (takeoffResult.valid) {
 
     const takeoffSpeed =
         takeoffResult.speed;
 
-
     const aftStickSpeed =
         calculateAftStickSpeed(
             takeoffSpeed
         );
 
+    $("takeoffSpeed").textContent =
+        `${takeoffSpeed.toFixed(0)} KIAS`;
 
-$("takeoffSpeed").textContent =
-    `${takeoffSpeed.toFixed(0)} KIAS`;
+    $("aftStickSpeed").textContent =
+        `${aftStickSpeed.toFixed(0)} KIAS`;
+
+} else {
+
+    $("takeoffSpeed").textContent =
+        "PENDIENTE";
+
+    $("aftStickSpeed").textContent =
+        "PENDIENTE";
+}
 
 
-$("aftStickSpeed").textContent =
-    `${aftStickSpeed.toFixed(0)} KIAS`;
-
-
-const obstacleResult =
-    calculateObstacleClearanceSpeed(
-        grossWeight / 1000,
-        cg
-    );
+// =================================================
+// MOSTRAR OCS
+// =================================================
 
 $("obstacleSpeed").textContent =
     obstacleResult.valid
@@ -1498,17 +1532,18 @@ $("obstacleSpeed").textContent =
         : "PENDIENTE";
 
 
-const tireResult =
-    calculateTireLimitSpeed(
-        temperature,
-        pa
-    );
+// =================================================
+// MOSTRAR TIRE LIMIT
+// =================================================
 
 if (tireResult.valid) {
 
     const correctedTireSpeed =
         tireResult.speed +
-        Math.max(0, wind.headwind);
+        Math.max(
+            0,
+            wind.headwind
+        );
 
     $("tireSpeed").textContent =
         `${Math.round(correctedTireSpeed)} KIAS`;
@@ -1517,28 +1552,6 @@ if (tireResult.valid) {
 
     $("tireSpeed").textContent =
         "PENDIENTE";
-
-}
-
-}
-
-else {
-
-    $("takeoffSpeed").textContent =
-        "PENDIENTE";
-
-
-    $("aftStickSpeed").textContent =
-        "PENDIENTE";
-
-
-    $("obstacleSpeed").textContent =
-        "PENDIENTE";
-
-
-    $("tireSpeed").textContent =
-        "PENDIENTE";
-
 }
 
 // =================================================
@@ -1636,6 +1649,79 @@ if (setosButton) {
             `&cg=${encodeURIComponent(setosCG)}`;
 
         // Abrir el recorrido
+        window.open(
+            url,
+            "_blank"
+        );
+    };
+}
+
+// =================================================
+// FA23 — TAKEOFF PERFORMANCE — VER RECORRIDO
+// =================================================
+
+const performanceButton =
+    $("performanceBtn");
+
+if (performanceButton) {
+
+    performanceButton.onclick = function () {
+
+        // -------------------------------------------------
+        // VERIFICAR TAKEOFF FACTOR
+        // -------------------------------------------------
+
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir el recorrido de Takeoff Performance porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // DATOS ACTUALES DEL TOLD
+        // -------------------------------------------------
+
+        const performanceTemp =
+            temperature;
+
+        const performancePA =
+            pa;
+
+        const performanceGW =
+            grossWeight;
+
+        const performanceCG =
+            cg;
+
+        const performanceThrust =
+            thrust;
+
+        const performanceAntiIce =
+            antiIce;
+
+
+        // -------------------------------------------------
+        // CONSTRUIR URL
+        // -------------------------------------------------
+
+        const url =
+            "performance/performance-view.html" +
+            `?temp=${encodeURIComponent(performanceTemp)}` +
+            `&pa=${encodeURIComponent(performancePA)}` +
+            `&gw=${encodeURIComponent(performanceGW)}` +
+            `&cg=${encodeURIComponent(performanceCG)}` +
+            `&thrust=${encodeURIComponent(performanceThrust)}` +
+            `&antiIce=${encodeURIComponent(performanceAntiIce)}`;
+
+
+        // -------------------------------------------------
+        // ABRIR RECORRIDO
+        // -------------------------------------------------
+
         window.open(
             url,
             "_blank"
@@ -1850,13 +1936,18 @@ console.log(
 
 
 
-$("status").className =
-    "status info";
+const statusElement = $("status");
+
+if (statusElement) {
+    statusElement.className = "status info";
+}
+
 }
 
 // =====================================================
 // BOTÓN CALCULAR
 // =====================================================
+
 
 $("calculateBtn")
     .addEventListener(
