@@ -837,8 +837,11 @@ function calculate() {
         aerodrome.runways[
             $("runway").value
         ];
+    updateAccelerationControlOptions(
+    Number(runway.lengthFt)
+);
 
-
+calculateAccelerationControl();
 
     // -------------------------------------------------
     // DATOS DE ENTRADA
@@ -1184,6 +1187,175 @@ if (
 }
 
 // =================================================
+// FA23 — GRADIENTE TREN ARRIBA
+// =================================================
+
+if (
+    takeoffFactorResult.valid &&
+    typeof window.calculateFA23GradientTrenArriba === "function"
+) {
+
+    const gradientTrenArribaResult =
+        window.calculateFA23GradientTrenArriba({
+
+            takeoffFactor:
+                takeoffFactorResult.factor,
+
+            pressureAltitude:
+                pa,
+
+            grossWeight:
+                grossWeight,
+
+            tailwind:
+                Math.max(
+                    0,
+                    wind.tailwind
+                )
+
+        });
+
+
+    if (gradientTrenArribaResult.valid) {
+
+        $("gradientArribaRateOfClimb").textContent =
+            gradientTrenArribaResult.result.rateOfClimb.toFixed(0);
+
+
+        $("gradientArribaPercent").textContent =
+            gradientTrenArribaResult.result.gradientPercent.toFixed(2);
+
+
+        $("gradientArribaFtNm").textContent =
+            gradientTrenArribaResult.result.gradientFtNm.toFixed(0);
+
+    } else {
+
+        $("gradientArribaRateOfClimb").textContent =
+            "PENDIENTE";
+
+
+        $("gradientArribaPercent").textContent =
+            "PENDIENTE";
+
+
+        $("gradientArribaFtNm").textContent =
+            "PENDIENTE";
+
+    }
+
+} else {
+
+    $("gradientArribaRateOfClimb").textContent =
+        "PENDIENTE";
+
+
+    $("gradientArribaPercent").textContent =
+        "PENDIENTE";
+
+
+    $("gradientArribaFtNm").textContent =
+        "PENDIENTE";
+
+}
+
+// =================================================
+// FA23 — TOGR
+// =================================================
+
+const togrElement =
+    $("togrResult");
+
+if (
+    togrElement &&
+    takeoffFactorResult.valid &&
+    window.FA23TOGR &&
+    typeof window.FA23TOGR.calculate === "function"
+) {
+
+    try {
+
+        // Determinar tipo y valor de viento
+        let togrWindType = "calm";
+        let togrWind = 0;
+
+        if (wind.headwind > 0) {
+
+            togrWindType = "headwind";
+            togrWind = wind.headwind;
+
+        } else if (wind.tailwind > 0) {
+
+            togrWindType = "tailwind";
+            togrWind = wind.tailwind;
+
+        }
+
+
+        const togrResult =
+            window.FA23TOGR.calculate({
+
+                takeoffFactor:
+                    takeoffFactorResult.factor,
+
+                grossWeight:
+                    grossWeight,
+
+                cg:
+                    cg,
+
+                windType:
+                    togrWindType,
+
+                wind:
+                    togrWind
+
+            });
+
+
+        if (togrResult.valid) {
+
+            togrElement.textContent =
+                togrResult.result.togrFt
+                    .toFixed(0);
+
+        } else {
+
+            togrElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "TOGR:",
+                togrResult.message
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error calculando TOGR:",
+            error
+        );
+
+        togrElement.textContent =
+            "PENDIENTE";
+
+    }
+
+} else {
+
+    if (togrElement) {
+
+        togrElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
+
+
+// =================================================
 // FA23 — CRITICAL FIELD LENGTH
 // =================================================
 
@@ -1228,19 +1400,18 @@ if (
             });
 
 
-        if (cflResult.valid) {
-
-            cflElement.textContent =
-    (
-        Number(cflResult.result.cfl) * 1000
-    ).toLocaleString("es-ES");
-
-        } else {
-
-            cflElement.textContent =
-                "PENDIENTE";
-
-        }
+if (cflResult.valid) { 
+ 
+    cflElement.textContent = 
+        Math.round(cflResult.result.cflFt)
+            .toLocaleString("es-ES");
+ 
+} else { 
+ 
+    cflElement.textContent = 
+        "PENDIENTE"; 
+ 
+}
 
         // =================================================
 // FA23 — REFUSAL SPEED / CRITICAL ENGINE FAILURE SPEED
@@ -1432,6 +1603,214 @@ const refusalRunwayLength =
 
 updateMainRefusalCEF();
 
+// =================================================
+// FA23 — REFUSAL SPEED / CEF — CHUTE
+// RESULTADOS PRINCIPALES DEL TOLD
+// =================================================
+
+async function updateMainRefusalChute() {
+
+    const refusalElement =
+        $("refusalSpeedChute");
+
+    const cefElement =
+        $("criticalEngineFailureSpeedChute");
+
+    if (!refusalElement || !cefElement) {
+        return;
+    }
+
+    // -------------------------------------------------
+    // VALIDAR DATOS BASE
+    // -------------------------------------------------
+
+    if (!takeoffFactorResult.valid) {
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        cefElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+    // -------------------------------------------------
+    // DATOS DEL TOLD
+    // -------------------------------------------------
+
+    const chuteTOF =
+        Number(takeoffFactorResult.factor);
+
+    const chuteGW =
+        Number(grossWeight);
+
+    const chuteRCR =
+        Number(rcr);
+
+    const aerodrome =
+        aerodromes[$("aerodrome").value];
+
+    const runway =
+        aerodrome.runways[$("runway").value];
+
+    const chuteRunwayLength =
+        Number(runway.lengthFt);
+
+    // -------------------------------------------------
+    // CFL YA CALCULADO POR EL TOLD
+    // -------------------------------------------------
+
+    const cflText =
+        $("cflResult")
+            ? $("cflResult").textContent
+            : "";
+
+    const chuteCFL =
+        Number(
+            cflText
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+    // -------------------------------------------------
+    // VALIDACIÓN
+    // -------------------------------------------------
+
+    if (
+        !Number.isFinite(chuteTOF) ||
+        !Number.isFinite(chuteGW) ||
+        !Number.isFinite(chuteRCR) ||
+        !Number.isFinite(chuteCFL) ||
+        !Number.isFinite(chuteRunwayLength)
+    ) {
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        cefElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+    // -------------------------------------------------
+    // CARGAR DIGITALIZACIÓN CHUTE
+    // -------------------------------------------------
+
+    try {
+
+        const response =
+            await fetch(
+                "refusal-cef/FA23_Refusal_Chute_Digitalizacion.json"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "No se pudo cargar la digitalización REFUSAL CHUTE."
+            );
+        }
+
+        const data =
+            await response.json();
+
+        // -------------------------------------------------
+        // CALCULAR CHUTE
+        // -------------------------------------------------
+
+        const result =
+            window.FA23RefusalChute.calculate(
+                data,
+                {
+                    tof:
+                        chuteTOF,
+
+                    grossWeight:
+                        chuteGW,
+
+                    cflFt:
+                        chuteCFL,
+
+                    rcr:
+                        chuteRCR,
+
+                    runwayLengthFt:
+                        chuteRunwayLength
+                }
+            );
+
+        if (!result.valid) {
+
+            console.error(
+                "REFUSAL CHUTE / CEF:",
+                result.message
+            );
+
+            refusalElement.textContent =
+                "PENDIENTE";
+
+            cefElement.textContent =
+                "PENDIENTE";
+
+            return;
+        }
+
+        // -------------------------------------------------
+        // MOSTRAR REFUSAL CHUTE
+        // -------------------------------------------------
+
+        refusalElement.textContent =
+            result.result.refusalDisplay;
+
+        // -------------------------------------------------
+        // MOSTRAR CEF CHUTE
+        // -------------------------------------------------
+
+        cefElement.textContent =
+            result.result.cefDisplay;
+
+        // -------------------------------------------------
+        // >180 EN VERDE
+        // -------------------------------------------------
+
+        refusalElement.classList.toggle(
+            "over-limit",
+            result.result.refusalOver180 === true
+        );
+
+        cefElement.classList.toggle(
+            "over-limit",
+            result.result.cefOver180 === true
+        );
+
+        console.log(
+            "REFUSAL CHUTE:",
+            result.result.refusalDisplay
+        );
+
+        console.log(
+            "CRITICAL ENGINE FAILURE CHUTE:",
+            result.result.cefDisplay
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error calculando REFUSAL CHUTE / CEF:",
+            error
+        );
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        cefElement.textContent =
+            "PENDIENTE";
+    }
+}
+
+updateMainRefusalChute();
+
     } catch (error) {
 
         console.error(
@@ -1521,7 +1900,11 @@ if (takeoffResult.valid) {
         "PENDIENTE";
 }
 
+// =================================================
+// FA23 — CONTROL DE VELOCIDAD DE ACELERACIÓN
+// =================================================
 
+calculateAccelerationControl();
 // =================================================
 // MOSTRAR OCS
 // =================================================
@@ -1606,6 +1989,258 @@ if (gradientButton) {
     };
 }
 
+// =================================================
+// FA23 — VER RECORRIDO GRADIENTE TREN ARRIBA
+// =================================================
+
+const gradientArribaButton =
+    $("viewGradientArribaBtn");
+
+if (gradientArribaButton) {
+
+    gradientArribaButton.onclick = function () {
+
+        // Verificar Takeoff Factor
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir el recorrido de Gradiente Tren Arriba porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+
+        // Datos actuales del TOLD
+        const gradientArribaTOF =
+            takeoffFactorResult.factor;
+
+        const gradientArribaPA =
+            pa;
+
+        const gradientArribaGW =
+            grossWeight;
+
+        const gradientArribaTailwind =
+            Math.max(
+                0,
+                wind.tailwind
+            );
+
+
+        // Construir URL
+        const url =
+            "gradient-tren-arriba/gradient-view.html" +
+            `?tof=${encodeURIComponent(gradientArribaTOF)}` +
+            `&pa=${encodeURIComponent(gradientArribaPA)}` +
+            `&gw=${encodeURIComponent(gradientArribaGW)}` +
+            `&tailwind=${encodeURIComponent(gradientArribaTailwind)}`;
+
+
+        // Abrir recorrido
+        window.open(
+            url,
+            "_blank"
+        );
+
+    };
+
+}
+
+// =================================================
+// FA23 — VER RECORRIDO TOGR
+// =================================================
+
+const togrButton =
+    $("viewTogrBtn");
+
+if (togrButton) {
+
+    togrButton.onclick = function () {
+
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir el recorrido TOGR porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+
+        const togrTOF =
+            takeoffFactorResult.factor;
+
+        const togrGW =
+            grossWeight;
+
+        const togrCG =
+            cg;
+
+
+        // Determinar viento
+        let togrWindType = "calm";
+        let togrWind = 0;
+
+        if (wind.headwind > 0) {
+
+            togrWindType = "headwind";
+            togrWind = wind.headwind;
+
+        } else if (wind.tailwind > 0) {
+
+            togrWindType = "tailwind";
+            togrWind = wind.tailwind;
+
+        }
+
+
+        const url =
+            "togr/togr-view.html" +
+            `?tof=${encodeURIComponent(togrTOF)}` +
+            `&gw=${encodeURIComponent(togrGW)}` +
+            `&cg=${encodeURIComponent(togrCG)}` +
+            `&windType=${encodeURIComponent(togrWindType)}` +
+            `&wind=${encodeURIComponent(togrWind)}`;
+
+
+        window.open(
+            url,
+            "_blank"
+        );
+
+    };
+
+}
+
+// =================================================
+// FA23 — VER RECORRIDO DE ACELERACIÓN
+// =================================================
+
+const accelerationButton =
+    $("viewAccelerationBtn");
+
+if (accelerationButton) {
+
+    accelerationButton.onclick =
+        function () {
+
+            const mode =
+                $("accelerationControlMode")
+                    .value;
+
+
+            const aerodrome =
+                aerodromes[
+                    $("aerodrome").value
+                ];
+
+            const runway =
+                aerodrome.runways[
+                    $("runway").value
+                ];
+
+
+            let controlDistanceFt;
+
+
+            if (
+                mode === "distance"
+            ) {
+
+                controlDistanceFt =
+                    Number(
+                        $("accelerationDistance")
+                            .value
+                    );
+
+            } else {
+
+                const cartel =
+                    Number(
+                        $("accelerationCartel")
+                            .value
+                    );
+
+                controlDistanceFt =
+                    Number(runway.lengthFt) -
+                    (
+                        cartel * 1000
+                    );
+
+            }
+
+
+            const takeoffSpeedElement =
+                $("takeoffSpeed");
+
+            const togrElement =
+                $("togrResult");
+
+
+            const takeoffSpeed =
+                Number.parseFloat(
+                    takeoffSpeedElement.textContent
+                        .replace(",", ".")
+                );
+
+            const togrFt =
+                Number.parseFloat(
+                    togrElement.textContent
+                        .replace(",", ".")
+                );
+
+
+            if (
+                !Number.isFinite(
+                    takeoffSpeed
+                ) ||
+                !Number.isFinite(
+                    togrFt
+                ) ||
+                !Number.isFinite(
+                    controlDistanceFt
+                )
+            ) {
+
+                alert(
+                    "No se puede abrir el recorrido de aceleración porque Takeoff Speed, TOGR o la distancia de control están pendientes."
+                );
+
+                return;
+            }
+
+
+            const url =
+                "acceleration/acceleration-view.html" +
+
+                `?takeoffSpeed=${
+                    encodeURIComponent(
+                        takeoffSpeed
+                    )
+                }` +
+
+                `&togrFt=${
+                    encodeURIComponent(
+                        togrFt
+                    )
+                }` +
+
+                `&distanceFt=${
+                    encodeURIComponent(
+                        controlDistanceFt
+                    )
+                }`;
+
+
+            window.open(
+                url,
+                "_blank"
+            );
+
+        };
+
+}
 // =================================================
 // SETOS — VER RECORRIDO
 // =================================================
@@ -1930,6 +2565,115 @@ console.log(
     };
 }
 
+// =================================================
+// FA23 — REFUSAL / CEF — CHUTE
+// ABRIR RECORRIDO
+// =================================================
+
+const refusalChuteButton =
+    $("refusalChuteBtn");
+
+if (refusalChuteButton) {
+
+    refusalChuteButton.onclick = function () {
+
+        // -------------------------------------------------
+        // TAKEOFF FACTOR
+        // -------------------------------------------------
+
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir la tabla REFUSAL CHUTE porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+        // -------------------------------------------------
+        // DATOS DEL TOLD
+        // -------------------------------------------------
+
+        const chuteTOF =
+            takeoffFactorResult.factor;
+
+        const chuteGW =
+            grossWeight;
+
+        const chuteRCR =
+            rcr;
+
+        // -------------------------------------------------
+        // AERÓDROMO / PISTA
+        // -------------------------------------------------
+
+        const aerodrome =
+            aerodromes[$("aerodrome").value];
+
+        const runway =
+            aerodrome.runways[$("runway").value];
+
+        const chuteRunwayLength =
+            Number(runway.lengthFt);
+
+        // -------------------------------------------------
+        // CFL
+        // -------------------------------------------------
+
+        const cflElement =
+            $("cflResult");
+
+        if (!cflElement) {
+
+            alert(
+                "No se encontró el resultado CFL del TOLD."
+            );
+
+            return;
+        }
+
+        const chuteCFL =
+            Number(
+                cflElement.textContent
+                    .replace(/\./g, "")
+                    .replace(",", ".")
+            );
+
+        if (
+            !Number.isFinite(chuteCFL) ||
+            chuteCFL < 4000 ||
+            chuteCFL > 14000
+        ) {
+
+            alert(
+                "El CFL actual del TOLD no es válido para la tabla REFUSAL CHUTE."
+            );
+
+            return;
+        }
+
+        // -------------------------------------------------
+        // CONSTRUIR URL
+        // -------------------------------------------------
+
+        const url =
+            "refusal-cef/FA23_Refusal_Chute_View.html" +
+            `?tof=${encodeURIComponent(chuteTOF)}` +
+            `&gw=${encodeURIComponent(chuteGW)}` +
+            `&cfl=${encodeURIComponent(chuteCFL)}` +
+            `&rcr=${encodeURIComponent(chuteRCR)}` +
+            `&runwayLength=${encodeURIComponent(chuteRunwayLength)}`;
+
+        // -------------------------------------------------
+        // ABRIR RECORRIDO
+        // -------------------------------------------------
+
+        window.open(
+            url,
+            "_blank"
+        );
+    };
+}
 // -------------------------------------------------
 // MENSAJE DE ESTADO
 // -------------------------------------------------
@@ -2958,3 +3702,405 @@ if (clearBatchBtn) {
     );
 
 }
+
+// =================================================
+// FA23 — CONTROL DE VELOCIDAD DE ACELERACIÓN
+// =================================================
+
+function updateAccelerationControlOptions(
+    runwayLengthFt
+) {
+
+    const cartelSelect =
+        $("accelerationCartel");
+
+    if (!cartelSelect) {
+        return;
+    }
+
+    // ---------------------------------------------
+    // GUARDAR EL CARTEL QUE ESTABA SELECCIONADO
+    // ---------------------------------------------
+
+    const previousCartel =
+        cartelSelect.value;
+
+
+    // ---------------------------------------------
+    // RECREAR LA LISTA
+    // ---------------------------------------------
+
+    cartelSelect.innerHTML = "";
+
+    const maxCartel =
+        Math.floor(
+            runwayLengthFt / 1000
+        );
+
+    for (
+        let cartel = maxCartel;
+        cartel >= 0;
+        cartel--
+    ) {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            cartel;
+
+        option.textContent =
+            `Cartel ${cartel}`;
+
+        cartelSelect.appendChild(
+            option
+        );
+
+    }
+
+
+    // ---------------------------------------------
+    // RESTAURAR EL CARTEL ANTERIOR
+    // ---------------------------------------------
+
+if (
+    previousCartel !== "" &&
+    Number(previousCartel) <= maxCartel
+) {
+
+    cartelSelect.value =
+        previousCartel;
+
+} else {
+
+    // Cartel por defecto al cargar la página
+    const defaultCartel = 7;
+
+    cartelSelect.value =
+        defaultCartel <= maxCartel
+            ? defaultCartel
+            : maxCartel;
+
+}
+
+}
+
+function calculateAccelerationControl() {
+
+    const mode =
+        $("accelerationControlMode");
+
+    const distanceElement =
+        $("accelerationDistance");
+
+    const cartelElement =
+        $("accelerationCartel");
+
+    const resultElement =
+        $("accelerationSpeed");
+
+    const controlDistanceElement =
+        $("accelerationControlDistance");
+
+    if (
+        !mode ||
+        !resultElement ||
+        !controlDistanceElement
+    ) {
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // OBTENER LONGITUD DE PISTA
+    // -------------------------------------------------
+
+    const aerodrome =
+        aerodromes[
+            $("aerodrome").value
+        ];
+
+    if (!aerodrome) {
+        return;
+    }
+
+    const runway =
+        aerodrome.runways[
+            $("runway").value
+        ];
+
+    if (!runway) {
+        return;
+    }
+
+    const runwayLength =
+        Number(runway.lengthFt);
+
+
+    // -------------------------------------------------
+    // DETERMINAR DISTANCIA DE CONTROL
+    // -------------------------------------------------
+
+    let controlDistanceFt;
+
+
+    if (
+        mode.value === "distance"
+    ) {
+
+        controlDistanceFt =
+            Number(
+                distanceElement.value
+            );
+
+    } else {
+
+        const cartel =
+            Number(
+                cartelElement.value
+            );
+
+        controlDistanceFt =
+            runwayLength -
+            (
+                cartel * 1000
+            );
+
+    }
+
+
+    if (
+        !Number.isFinite(
+            controlDistanceFt
+        )
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        controlDistanceElement.textContent =
+            "—";
+
+        return;
+    }
+
+
+controlDistanceElement.textContent =
+    Math.round(controlDistanceFt).toLocaleString("es-ES");
+
+
+    // -------------------------------------------------
+    // OBTENER TAKEOFF SPEED
+    // -------------------------------------------------
+
+    const takeoffSpeedElement =
+        $("takeoffSpeed");
+
+    const togrElement =
+        $("togrResult");
+
+
+    if (
+        !takeoffSpeedElement ||
+        !togrElement
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    const takeoffSpeed =
+        Number.parseFloat(
+            takeoffSpeedElement.textContent
+                .replace(",", ".")
+        );
+
+    const togrFt =
+        Number.parseFloat(
+            togrElement.textContent
+                .replace(",", ".")
+        );
+
+
+    if (
+        !Number.isFinite(
+            takeoffSpeed
+        ) ||
+        !Number.isFinite(
+            togrFt
+        )
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // MOTOR DE ACELERACIÓN
+    // -------------------------------------------------
+
+    if (
+        typeof window.calculateFA23Acceleration !==
+        "function"
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        console.error(
+            "No se encontró calculateFA23Acceleration."
+        );
+
+        return;
+    }
+
+
+    const accelerationResult =
+        window.calculateFA23Acceleration({
+
+            takeoffSpeed:
+                takeoffSpeed,
+
+            takeoffDistanceFt:
+                togrFt,
+
+            controlDistanceFt:
+                controlDistanceFt
+
+        });
+
+
+    if (
+        accelerationResult.valid
+    ) {
+
+        resultElement.textContent =
+            accelerationResult.result.speed
+                .toFixed(1);
+
+    } else {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        console.warn(
+            "Aceleración:",
+            accelerationResult.message
+        );
+
+    }
+
+}
+
+// =================================================
+// FA23 — SELECTOR DISTANCIA / CARTEL
+// =================================================
+
+const accelerationMode =
+    $("accelerationControlMode");
+
+const accelerationDistanceBox =
+    $("accelerationDistanceBox");
+
+const accelerationCartelBox =
+    $("accelerationCartelBox");
+
+const accelerationCartel =
+    $("accelerationCartel");
+
+
+function updateAccelerationModeUI() {
+
+    if (
+        !accelerationMode ||
+        !accelerationDistanceBox ||
+        !accelerationCartelBox
+    ) {
+        return;
+    }
+
+
+    if (
+        accelerationMode.value === "cartel"
+    ) {
+
+        // OCULTAR DISTANCIA
+        accelerationDistanceBox.style.display =
+            "none";
+
+        // MOSTRAR CARTEL
+        accelerationCartelBox.style.display =
+            "block";
+
+    } else {
+
+        // MOSTRAR DISTANCIA
+        accelerationDistanceBox.style.display =
+            "block";
+
+        // OCULTAR CARTEL
+        accelerationCartelBox.style.display =
+            "none";
+
+    }
+
+}
+
+
+// -------------------------------------------------
+// CAMBIO DISTANCIA / CARTEL
+// -------------------------------------------------
+
+if (accelerationMode) {
+
+    accelerationMode.addEventListener(
+        "change",
+        function () {
+
+            updateAccelerationModeUI();
+
+            calculateAccelerationControl();
+
+        }
+    );
+
+}
+
+
+// -------------------------------------------------
+// CAMBIO DE CARTEL
+// -------------------------------------------------
+
+if (accelerationCartel) {
+
+    accelerationCartel.addEventListener(
+        "change",
+        function () {
+
+            calculateAccelerationControl();
+
+        }
+    );
+
+}
+
+
+// -------------------------------------------------
+// ESTADO INICIAL
+// -------------------------------------------------
+
+if (accelerationMode) {
+
+    accelerationMode.value = "cartel";
+
+}
+
+updateAccelerationModeUI();
+
+calculateAccelerationControl();

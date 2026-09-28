@@ -55,13 +55,129 @@ function pointFromWind(gwPoint,headwind,tailwind){
  return{type,wind,base1,start:base1,end:hit,lineA:A.k,lineB:B.k};
 }
 function pointFromCG(base2Point,cg){
- const base2Y=(D.elements.baseline2[0].yPixel+D.elements.baseline2[1].yPixel)/2,base3Y=(D.elements.baseline3[0].yPixel+D.elements.baseline3[1].yPixel)/2,base2={x:base2Point.x,y:base2Y};
- if(Math.abs(cg-15)<1e-9)return{baseline2:base2,cgPoint:base2,cgBaseline:base2,baseline3:{x:base2.x,y:base3Y},upper:false};
- const upper=cg>15,fam=upper?D.elements.cgUpper:D.elements.cgLower,entries=Object.entries(fam).map(([k,pts])=>({k:Number(k),pts,xBase:pts[pts.length-1].xPixel})).sort((a,b)=>a.xBase-b.xBase);
- let A=entries[0],B=entries[entries.length-1];for(let i=0;i<entries.length-1;i++){if(base2.x>=entries[i].xBase&&base2.x<=entries[i+1].xBase){A=entries[i];B=entries[i+1];break;}}
- const den=B.xBase-A.xBase,t=Math.abs(den)<1e-9?0:(base2.x-A.xBase)/den,ip=interpPoints(A.pts,B.pts,clamp(t,0,1)),yCG=scaleY(D.scales.cg,cg),p0=ip[0],p1=ip[ip.length-1],dy=p1.yPixel-p0.yPixel,dx=p1.xPixel-p0.xPixel,slope=Math.abs(dy)<1e-9?0:dx/dy;
- if(upper){const cgPoint={x:base2.x,y:yCG},cgBaseline={x:cgPoint.x+slope*(base2Y-yCG),y:base2Y};return{baseline2:base2,cgPoint,cgBaseline,baseline3:{x:cgBaseline.x,y:base3Y},upper:true,lineA:A.k,lineB:B.k};}
- const cgPoint={x:base2.x+slope*(yCG-base2Y),y:yCG};return{baseline2:base2,cgPoint,cgBaseline:base2,baseline3:{x:cgPoint.x,y:base3Y},upper:false,lineA:A.k,lineB:B.k};
+
+  const base2Y =
+    (D.elements.baseline2[0].yPixel +
+     D.elements.baseline2[1].yPixel) / 2;
+
+  const base3Y =
+    (D.elements.baseline3[0].yPixel +
+     D.elements.baseline3[1].yPixel) / 2;
+
+  // BASELINE = CG 15 %
+  const base2 = {
+    x: base2Point.x,
+    y: base2Y
+  };
+
+  // CG = 15 %
+  if(Math.abs(cg-15)<1e-9){
+    return {
+      baseline2: base2,
+      cgPoint: base2,
+      cgBaseline: base2,
+      baseline3: {
+        x: base2.x,
+        y: base3Y
+      },
+      upper: false
+    };
+  }
+
+  const upper = cg > 15;
+
+  // Seleccionamos las referencias correspondientes
+  const fam = upper
+    ? D.elements.cgUpper
+    : D.elements.cgLower;
+
+  const entries = Object.entries(fam)
+    .map(([k,pts]) => ({
+      k:Number(k),
+      pts
+    }));
+
+  // Elegimos la referencia cuya posición en BASELINE
+  // está más próxima al punto de entrada.
+  let best = entries[0];
+  let bestDist = Infinity;
+
+  for(const e of entries){
+
+    const anchor = upper
+      ? e.pts[e.pts.length-1]
+      : e.pts[0];
+
+    const d = Math.abs(anchor.xPixel - base2.x);
+
+    if(d < bestDist){
+      bestDist = d;
+      best = e;
+    }
+  }
+
+  const pts = best.pts;
+
+  const pA = pts[0];
+  const pB = pts[pts.length-1];
+
+  // Pendiente de la línea de referencia
+  const dy = pB.yPixel - pA.yPixel;
+  const dx = pB.xPixel - pA.xPixel;
+
+  if(Math.abs(dy)<1e-9){
+    throw new Error('La referencia de CG no tiene pendiente utilizable.');
+  }
+
+  const slope = dx / dy;
+
+  // Nivel correspondiente al CG solicitado
+  const yCG = scaleY(D.scales.cg,cg);
+
+  /*
+   * IMPORTANTE:
+   *
+   * Primero llegamos a la BASELINE (CG 15).
+   *
+   * Después:
+   *
+   * CG > 15  -> subimos ↖
+   * CG < 15  -> bajamos ↘
+   *
+   * siempre paralelo a las líneas de referencia.
+   */
+
+  const cgPoint = {
+    x: base2.x + slope * (yCG - base2Y),
+    y: yCG
+  };
+
+  // Este es el punto REAL de entrada a la BASELINE.
+  // Es el mismo punto donde estamos después de bajar
+  // verticalmente desde el viento.
+  const cgBaseline = {
+    x: base2.x,
+    y: base2Y
+  };
+
+  /*
+   * Una vez alcanzado el CG, bajamos verticalmente
+   * hasta BASELINE 3 para continuar con RCR.
+   */
+  const baseline3 = {
+    x: cgPoint.x,
+    y: base3Y
+  };
+
+  return {
+    baseline2: base2,
+    cgPoint: cgPoint,
+    cgBaseline: cgBaseline,
+    baseline3: baseline3,
+    upper: upper,
+    lineA: best.k,
+    lineB: best.k
+  };
 }
 function pointFromRCR(base3,rcr){
  const base3Y=(D.elements.baseline3[0].yPixel+D.elements.baseline3[1].yPixel)/2,baseline={x:base3.x,y:base3Y},yR=scaleY(D.scales.rcr,rcr);

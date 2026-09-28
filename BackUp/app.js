@@ -1228,11 +1228,11 @@ if (
             });
 
 
-        if (cflResult.valid) {
-
-            cflElement.textContent =
-                cflResult.result.cflFt
-                    .toLocaleString("es-ES");
+if (cflResult.valid) { 
+ 
+    cflElement.textContent = 
+        Math.round(cflResult.result.cflFt)
+            .toLocaleString("es-ES");
 
         } else {
 

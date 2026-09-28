@@ -1,0 +1,1034 @@
+{
+  "version": "FA23-CFL-REFUSAL-1",
+  "chart": "FA-23 CRITICAL FIELD LENGTH / REFUSAL SPEED / CRITICAL ENGINE FAILURE SPEED",
+  "image": {
+    "width": 760,
+    "height": 849
+  },
+  "scales": {
+    "tof": {
+      "name": "TOF",
+      "a": "1",
+      "b": "10",
+      "pA": null,
+      "pB": null
+    },
+    "grossWeight": {
+      "name": "Gross Weight",
+      "a": "12000",
+      "b": "24000",
+      "pA": null,
+      "pB": null
+    },
+    "rwyCfl": {
+      "name": "RWY CFL",
+      "a": "4000",
+      "b": "14000",
+      "pA": null,
+      "pB": null
+    },
+    "rcr1": {
+      "name": "RCR superior",
+      "a": "0",
+      "b": "23",
+      "pA": null,
+      "pB": null
+    },
+    "refusalSpeed": {
+      "name": "Refusal Speed",
+      "a": "90",
+      "b": "180",
+      "pA": null,
+      "pB": null
+    },
+    "rcr2": {
+      "name": "RCR inferior",
+      "a": "0",
+      "b": "23",
+      "pA": null,
+      "pB": null
+    },
+    "criticalEngineFailureSpeed": {
+      "name": "Critical Engine Failure Speed",
+      "a": "90",
+      "b": "180",
+      "pA": null,
+      "pB": null
+    }
+  },
+  "elements": {
+    "tof": [
+      {
+        "n": 1,
+        "xPixel": 10,
+        "yPixel": 329.5
+      },
+      {
+        "n": 2,
+        "xPixel": 371,
+        "yPixel": 329.5
+      }
+    ],
+    "grossWeight": {
+      "12000": [
+        {
+          "n": 1,
+          "xPixel": 10,
+          "yPixel": 70.5
+        },
+        {
+          "n": 2,
+          "xPixel": 370,
+          "yPixel": 304.5
+        }
+      ],
+      "14000": [
+        {
+          "n": 1,
+          "xPixel": 10.88,
+          "yPixel": 56
+        },
+        {
+          "n": 2,
+          "xPixel": 369.92,
+          "yPixel": 285.12
+        }
+      ],
+      "16000": [
+        {
+          "n": 1,
+          "xPixel": 371.2,
+          "yPixel": 265.28
+        },
+        {
+          "n": 2,
+          "xPixel": 11.52,
+          "yPixel": 38.72
+        }
+      ],
+      "18000": [
+        {
+          "n": 1,
+          "xPixel": 370.56,
+          "yPixel": 247.36
+        },
+        {
+          "n": 2,
+          "xPixel": 10.24,
+          "yPixel": 25.28
+        }
+      ],
+      "20000": [
+        {
+          "n": 1,
+          "xPixel": 371.2,
+          "yPixel": 230.08
+        },
+        {
+          "n": 2,
+          "xPixel": 10.88,
+          "yPixel": 13.76
+        }
+      ],
+      "22000": [
+        {
+          "n": 1,
+          "xPixel": 370.56,
+          "yPixel": 216
+        },
+        {
+          "n": 2,
+          "xPixel": 25.6,
+          "yPixel": 9.92
+        }
+      ],
+      "24000": [
+        {
+          "n": 1,
+          "xPixel": 369.92,
+          "yPixel": 202.56
+        },
+        {
+          "n": 2,
+          "xPixel": 48.64,
+          "yPixel": 12.48
+        }
+      ]
+    },
+    "rwyCfl": {
+      "4000": [
+        {
+          "n": 1,
+          "xPixel": 370.56,
+          "yPixel": 86.72
+        },
+        {
+          "n": 2,
+          "xPixel": 604.16,
+          "yPixel": 330.56
+        }
+      ],
+      "5000": [
+        {
+          "n": 1,
+          "xPixel": 371.84,
+          "yPixel": 38.72
+        },
+        {
+          "n": 2,
+          "xPixel": 702.08,
+          "yPixel": 331.84
+        }
+      ],
+      "6000": [
+        {
+          "n": 1,
+          "xPixel": 385.28,
+          "yPixel": 11.2
+        },
+        {
+          "n": 2,
+          "xPixel": 730.88,
+          "yPixel": 294.72
+        }
+      ],
+      "7000": [
+        {
+          "n": 1,
+          "xPixel": 417.92,
+          "yPixel": 12.48
+        },
+        {
+          "n": 2,
+          "xPixel": 732.8,
+          "yPixel": 251.84
+        }
+      ],
+      "8000": [
+        {
+          "n": 1,
+          "xPixel": 441.6,
+          "yPixel": 11.84
+        },
+        {
+          "n": 2,
+          "xPixel": 732.16,
+          "yPixel": 216
+        }
+      ],
+      "9000": [
+        {
+          "n": 1,
+          "xPixel": 468.48,
+          "yPixel": 11.84
+        },
+        {
+          "n": 2,
+          "xPixel": 731.52,
+          "yPixel": 189.12
+        }
+      ],
+      "10000": [
+        {
+          "n": 1,
+          "xPixel": 494.08,
+          "yPixel": 11.84
+        },
+        {
+          "n": 2,
+          "xPixel": 731.52,
+          "yPixel": 166.72
+        }
+      ],
+      "11000": [
+        {
+          "n": 1,
+          "xPixel": 517.12,
+          "yPixel": 11.2
+        },
+        {
+          "n": 2,
+          "xPixel": 730.88,
+          "yPixel": 146.24
+        }
+      ],
+      "12000": [
+        {
+          "n": 1,
+          "xPixel": 536.96,
+          "yPixel": 11.84
+        },
+        {
+          "n": 2,
+          "xPixel": 731.52,
+          "yPixel": 128.96
+        }
+      ],
+      "13000": [
+        {
+          "n": 1,
+          "xPixel": 555.52,
+          "yPixel": 11.2
+        },
+        {
+          "n": 2,
+          "xPixel": 731.52,
+          "yPixel": 112.96
+        }
+      ],
+      "14000": [
+        {
+          "n": 1,
+          "xPixel": 571.52,
+          "yPixel": 11.2
+        },
+        {
+          "n": 2,
+          "xPixel": 730.88,
+          "yPixel": 96.96
+        }
+      ]
+    },
+    "baseline1": [
+      {
+        "n": 1,
+        "xPixel": 370.56,
+        "yPixel": 345.28
+      },
+      {
+        "n": 2,
+        "xPixel": 732.16,
+        "yPixel": 347.2
+      }
+    ],
+    "rcr1": [
+      {
+        "n": 1,
+        "xPixel": 369.92,
+        "yPixel": 530.24
+      },
+      {
+        "n": 2,
+        "xPixel": 368.64,
+        "yPixel": 345.28
+      }
+    ],
+    "refusalCurves": {
+      "1": [
+        {
+          "n": 1,
+          "xPixel": 450.56,
+          "yPixel": 345.28
+        },
+        {
+          "n": 2,
+          "xPixel": 438.4,
+          "yPixel": 378.56
+        },
+        {
+          "n": 3,
+          "xPixel": 415.36,
+          "yPixel": 416.96
+        },
+        {
+          "n": 4,
+          "xPixel": 390.4,
+          "yPixel": 444.48
+        },
+        {
+          "n": 5,
+          "xPixel": 371.84,
+          "yPixel": 460.48
+        }
+      ],
+      "2": [
+        {
+          "n": 1,
+          "xPixel": 493.44,
+          "yPixel": 345.28
+        },
+        {
+          "n": 2,
+          "xPixel": 482.56,
+          "yPixel": 372.8
+        },
+        {
+          "n": 3,
+          "xPixel": 456.32,
+          "yPixel": 413.12
+        },
+        {
+          "n": 4,
+          "xPixel": 433.92,
+          "yPixel": 438.72
+        },
+        {
+          "n": 5,
+          "xPixel": 404.48,
+          "yPixel": 463.04
+        },
+        {
+          "n": 6,
+          "xPixel": 371.2,
+          "yPixel": 482.88
+        }
+      ],
+      "3": [
+        {
+          "n": 1,
+          "xPixel": 532.48,
+          "yPixel": 346.56
+        },
+        {
+          "n": 2,
+          "xPixel": 517.12,
+          "yPixel": 384.32
+        },
+        {
+          "n": 3,
+          "xPixel": 501.76,
+          "yPixel": 407.36
+        },
+        {
+          "n": 4,
+          "xPixel": 482.56,
+          "yPixel": 428.48
+        },
+        {
+          "n": 5,
+          "xPixel": 457.6,
+          "yPixel": 453.44
+        },
+        {
+          "n": 6,
+          "xPixel": 432,
+          "yPixel": 472
+        },
+        {
+          "n": 7,
+          "xPixel": 401.92,
+          "yPixel": 488.64
+        },
+        {
+          "n": 8,
+          "xPixel": 371.84,
+          "yPixel": 502.72
+        }
+      ],
+      "4": [
+        {
+          "n": 1,
+          "xPixel": 572.16,
+          "yPixel": 345.92
+        },
+        {
+          "n": 2,
+          "xPixel": 559.36,
+          "yPixel": 379.84
+        },
+        {
+          "n": 3,
+          "xPixel": 531.84,
+          "yPixel": 416.96
+        },
+        {
+          "n": 4,
+          "xPixel": 502.4,
+          "yPixel": 448.32
+        },
+        {
+          "n": 5,
+          "xPixel": 471.68,
+          "yPixel": 472
+        },
+        {
+          "n": 6,
+          "xPixel": 439.68,
+          "yPixel": 490.56
+        },
+        {
+          "n": 7,
+          "xPixel": 416,
+          "yPixel": 502.08
+        },
+        {
+          "n": 8,
+          "xPixel": 373.76,
+          "yPixel": 513.6
+        }
+      ],
+      "5": [
+        {
+          "n": 1,
+          "xPixel": 611.2,
+          "yPixel": 347.84
+        },
+        {
+          "n": 2,
+          "xPixel": 595.84,
+          "yPixel": 386.24
+        },
+        {
+          "n": 3,
+          "xPixel": 572.8,
+          "yPixel": 415.68
+        },
+        {
+          "n": 4,
+          "xPixel": 552.96,
+          "yPixel": 438.72
+        },
+        {
+          "n": 5,
+          "xPixel": 529.92,
+          "yPixel": 459.84
+        },
+        {
+          "n": 6,
+          "xPixel": 503.68,
+          "yPixel": 478.4
+        },
+        {
+          "n": 7,
+          "xPixel": 479.36,
+          "yPixel": 490.56
+        },
+        {
+          "n": 8,
+          "xPixel": 462.08,
+          "yPixel": 499.52
+        },
+        {
+          "n": 9,
+          "xPixel": 437.76,
+          "yPixel": 509.76
+        },
+        {
+          "n": 10,
+          "xPixel": 416.64,
+          "yPixel": 514.24
+        }
+      ],
+      "6": [
+        {
+          "n": 1,
+          "xPixel": 650.88,
+          "yPixel": 346.56
+        },
+        {
+          "n": 2,
+          "xPixel": 643.2,
+          "yPixel": 372.8
+        },
+        {
+          "n": 3,
+          "xPixel": 628.48,
+          "yPixel": 396.48
+        },
+        {
+          "n": 4,
+          "xPixel": 609.92,
+          "yPixel": 420.8
+        },
+        {
+          "n": 5,
+          "xPixel": 589.44,
+          "yPixel": 441.28
+        },
+        {
+          "n": 6,
+          "xPixel": 565.76,
+          "yPixel": 462.4
+        },
+        {
+          "n": 7,
+          "xPixel": 539.52,
+          "yPixel": 481.6
+        },
+        {
+          "n": 8,
+          "xPixel": 512,
+          "yPixel": 496.96
+        },
+        {
+          "n": 9,
+          "xPixel": 491.52,
+          "yPixel": 504
+        },
+        {
+          "n": 10,
+          "xPixel": 459.52,
+          "yPixel": 512.96
+        }
+      ],
+      "7": [
+        {
+          "n": 1,
+          "xPixel": 692.48,
+          "yPixel": 347.84
+        },
+        {
+          "n": 2,
+          "xPixel": 677.76,
+          "yPixel": 386.24
+        },
+        {
+          "n": 3,
+          "xPixel": 654.72,
+          "yPixel": 416.32
+        },
+        {
+          "n": 4,
+          "xPixel": 630.4,
+          "yPixel": 441.28
+        },
+        {
+          "n": 5,
+          "xPixel": 599.68,
+          "yPixel": 472
+        },
+        {
+          "n": 6,
+          "xPixel": 574.72,
+          "yPixel": 488
+        },
+        {
+          "n": 7,
+          "xPixel": 542.72,
+          "yPixel": 504.64
+        },
+        {
+          "n": 8,
+          "xPixel": 518.4,
+          "yPixel": 512.96
+        }
+      ],
+      "8": [
+        {
+          "n": 1,
+          "xPixel": 730.88,
+          "yPixel": 348.48
+        },
+        {
+          "n": 2,
+          "xPixel": 716.8,
+          "yPixel": 385.6
+        },
+        {
+          "n": 3,
+          "xPixel": 695.68,
+          "yPixel": 416.96
+        },
+        {
+          "n": 4,
+          "xPixel": 668.8,
+          "yPixel": 443.84
+        },
+        {
+          "n": 5,
+          "xPixel": 641.92,
+          "yPixel": 470.08
+        },
+        {
+          "n": 6,
+          "xPixel": 608,
+          "yPixel": 492.48
+        },
+        {
+          "n": 7,
+          "xPixel": 574.08,
+          "yPixel": 508.48
+        },
+        {
+          "n": 8,
+          "xPixel": 557.44,
+          "yPixel": 515.52
+        }
+      ],
+      "9": []
+    },
+    "refusalSpeed": [
+      {
+        "n": 1,
+        "xPixel": 369.92,
+        "yPixel": 528.96
+      },
+      {
+        "n": 2,
+        "xPixel": 731.52,
+        "yPixel": 531.52
+      }
+    ],
+    "baseline2": [
+      {
+        "n": 1,
+        "xPixel": 371.2,
+        "yPixel": 583.6
+      },
+      {
+        "n": 2,
+        "xPixel": 732,
+        "yPixel": 583.6
+      }
+    ],
+    "rcr2": [
+      {
+        "n": 1,
+        "xPixel": 370,
+        "yPixel": 767.5
+      },
+      {
+        "n": 2,
+        "xPixel": 368,
+        "yPixel": 585.5
+      }
+    ],
+    "cefCurves": {
+      "1": [
+        {
+          "n": 1,
+          "xPixel": 411,
+          "yPixel": 584.5
+        },
+        {
+          "n": 2,
+          "xPixel": 406,
+          "yPixel": 623.5
+        },
+        {
+          "n": 3,
+          "xPixel": 391,
+          "yPixel": 653.5
+        },
+        {
+          "n": 4,
+          "xPixel": 372,
+          "yPixel": 678.5
+        }
+      ],
+      "2": [
+        {
+          "n": 1,
+          "xPixel": 450,
+          "yPixel": 584.5
+        },
+        {
+          "n": 2,
+          "xPixel": 443,
+          "yPixel": 628.5
+        },
+        {
+          "n": 3,
+          "xPixel": 429,
+          "yPixel": 659.5
+        },
+        {
+          "n": 4,
+          "xPixel": 408,
+          "yPixel": 689.5
+        },
+        {
+          "n": 5,
+          "xPixel": 388,
+          "yPixel": 711.5
+        },
+        {
+          "n": 6,
+          "xPixel": 368,
+          "yPixel": 727.5
+        }
+      ],
+      "3": [
+        {
+          "n": 1,
+          "xPixel": 491,
+          "yPixel": 586.5
+        },
+        {
+          "n": 2,
+          "xPixel": 484,
+          "yPixel": 626.5
+        },
+        {
+          "n": 3,
+          "xPixel": 474,
+          "yPixel": 650.5
+        },
+        {
+          "n": 4,
+          "xPixel": 459,
+          "yPixel": 677.5
+        },
+        {
+          "n": 5,
+          "xPixel": 440,
+          "yPixel": 702.5
+        },
+        {
+          "n": 6,
+          "xPixel": 421,
+          "yPixel": 721.5
+        },
+        {
+          "n": 7,
+          "xPixel": 400,
+          "yPixel": 739.5
+        },
+        {
+          "n": 8,
+          "xPixel": 380,
+          "yPixel": 751.5
+        }
+      ],
+      "4": [
+        {
+          "n": 1,
+          "xPixel": 531,
+          "yPixel": 584.5
+        },
+        {
+          "n": 2,
+          "xPixel": 531,
+          "yPixel": 614.5
+        },
+        {
+          "n": 3,
+          "xPixel": 521,
+          "yPixel": 640.5
+        },
+        {
+          "n": 4,
+          "xPixel": 510,
+          "yPixel": 660.5
+        },
+        {
+          "n": 5,
+          "xPixel": 497,
+          "yPixel": 681.5
+        },
+        {
+          "n": 6,
+          "xPixel": 484,
+          "yPixel": 699.5
+        },
+        {
+          "n": 7,
+          "xPixel": 465,
+          "yPixel": 724.5
+        },
+        {
+          "n": 8,
+          "xPixel": 448,
+          "yPixel": 741.5
+        },
+        {
+          "n": 9,
+          "xPixel": 433,
+          "yPixel": 748.5
+        }
+      ],
+      "5": [
+        {
+          "n": 1,
+          "xPixel": 571,
+          "yPixel": 583.5
+        },
+        {
+          "n": 2,
+          "xPixel": 568,
+          "yPixel": 618.5
+        },
+        {
+          "n": 3,
+          "xPixel": 560,
+          "yPixel": 643.5
+        },
+        {
+          "n": 4,
+          "xPixel": 546,
+          "yPixel": 667.5
+        },
+        {
+          "n": 5,
+          "xPixel": 531,
+          "yPixel": 695.5
+        },
+        {
+          "n": 6,
+          "xPixel": 510,
+          "yPixel": 718.5
+        },
+        {
+          "n": 7,
+          "xPixel": 491,
+          "yPixel": 736.5
+        },
+        {
+          "n": 8,
+          "xPixel": 473,
+          "yPixel": 752.5
+        }
+      ],
+      "6": [
+        {
+          "n": 1,
+          "xPixel": 609,
+          "yPixel": 585.5
+        },
+        {
+          "n": 2,
+          "xPixel": 609,
+          "yPixel": 617.5
+        },
+        {
+          "n": 3,
+          "xPixel": 601,
+          "yPixel": 645.5
+        },
+        {
+          "n": 4,
+          "xPixel": 586,
+          "yPixel": 672.5
+        },
+        {
+          "n": 5,
+          "xPixel": 570,
+          "yPixel": 701.5
+        },
+        {
+          "n": 6,
+          "xPixel": 555,
+          "yPixel": 722.5
+        },
+        {
+          "n": 7,
+          "xPixel": 530,
+          "yPixel": 747.5
+        }
+      ],
+      "7": [
+        {
+          "n": 1,
+          "xPixel": 651,
+          "yPixel": 583.5
+        },
+        {
+          "n": 2,
+          "xPixel": 645,
+          "yPixel": 624.5
+        },
+        {
+          "n": 3,
+          "xPixel": 638,
+          "yPixel": 655.5
+        },
+        {
+          "n": 4,
+          "xPixel": 624,
+          "yPixel": 685.5
+        },
+        {
+          "n": 5,
+          "xPixel": 608,
+          "yPixel": 706.5
+        },
+        {
+          "n": 6,
+          "xPixel": 590,
+          "yPixel": 731.5
+        },
+        {
+          "n": 7,
+          "xPixel": 567,
+          "yPixel": 753.5
+        }
+      ],
+      "8": [
+        {
+          "n": 1,
+          "xPixel": 691,
+          "yPixel": 585.5
+        },
+        {
+          "n": 2,
+          "xPixel": 689,
+          "yPixel": 616.5
+        },
+        {
+          "n": 3,
+          "xPixel": 684,
+          "yPixel": 643.5
+        },
+        {
+          "n": 4,
+          "xPixel": 675,
+          "yPixel": 668.5
+        },
+        {
+          "n": 5,
+          "xPixel": 663,
+          "yPixel": 691.5
+        },
+        {
+          "n": 6,
+          "xPixel": 648,
+          "yPixel": 714.5
+        },
+        {
+          "n": 7,
+          "xPixel": 618,
+          "yPixel": 750.5
+        }
+      ],
+      "9": [
+        {
+          "n": 1,
+          "xPixel": 733,
+          "yPixel": 588.5
+        },
+        {
+          "n": 2,
+          "xPixel": 729,
+          "yPixel": 614.5
+        },
+        {
+          "n": 3,
+          "xPixel": 723,
+          "yPixel": 647.5
+        },
+        {
+          "n": 4,
+          "xPixel": 711,
+          "yPixel": 673.5
+        },
+        {
+          "n": 5,
+          "xPixel": 696,
+          "yPixel": 699.5
+        },
+        {
+          "n": 6,
+          "xPixel": 684,
+          "yPixel": 719.5
+        },
+        {
+          "n": 7,
+          "xPixel": 661,
+          "yPixel": 752.5
+        }
+      ]
+    },
+    "criticalEngineFailureSpeed": [
+      {
+        "n": 1,
+        "xPixel": 371,
+        "yPixel": 766.5
+      },
+      {
+        "n": 2,
+        "xPixel": 732,
+        "yPixel": 769.5
+      }
+    ]
+  }
+}
