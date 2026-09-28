@@ -7,6 +7,7 @@
     <title>TOLD ALA-23</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="refusal-cef/FA23_Refusal_Chute_CSS.css">
 </head>
 
 <body>
@@ -181,7 +182,7 @@
 
 
             <label>
-                Viento — dirección
+                Viento — Dirección
 
                 <div class="input-unit">
 
@@ -200,7 +201,7 @@
 
 
             <label>
-                Viento — intensidad
+                Viento — Intensidad
 
                 <div class="input-unit">
 
@@ -320,7 +321,7 @@
                     <input
                         id="cg"
                         type="number"
-                        value="10"
+                        value="17.2"
                     >
 
                     <span>% MAC</span>
@@ -393,278 +394,347 @@
 
 
 <br>
+
     <!-- ===================================================== -->
-    <!-- D) TAKEOFF PERFORMANCE -->
+    <!-- 4) TAKEOFF PERFORMANCE -->
     <!-- ===================================================== -->
 
     <section class="card">
 
         <div class="section-title">
-
             <div>
-
-                <h2>
-                    4. TAKEOFF PERFORMANCE
-                </h2>
-
+                <h2>4. TAKEOFF PERFORMANCE</h2>
             </div>
-
         </div>
 
-
-        <!-- ========================= -->
-        <!-- FA2-3 -->
-        <!-- ========================= -->
-
-
-
-<div class="results-grid performance">
-
-    <div>
-
-        <span>
-            Takeoff Factor
-        </span>
-
-        <strong id="takeoffFactor">
-            —
-        </strong>
-
-    </div>
-
-
-    <div>
-
-        <span>
-            Rate of Climb - Single Engine
-        </span>
-
-        <strong id="gradientRateOfClimb">
-            —
-        </strong>
-
-        <small>
-            ft/min
-        </small>
-
-    </div>
-
-
-    <div>
-
-        <span>
-            Gradient - Single Engine
-        </span>
-
-        <strong id="gradientPercent">
-            —
-        </strong>
-
-        <small>
-            %
-        </small>
-
-    </div>
-
-
-    <div>
-
-        <span>
-            Climb Gradient - Single Engine
-        </span>
-
-        <strong id="gradientFtNm">
-            —
-        </strong>
-
-        <small>
-            ft/NM
-        </small>
-
-    </div>
-
-
-<div>
-    <span>
-        Critical Field Length - No Drag Chute
-    </span>
-
-    <strong id="cflResult">
-        —
-    </strong>
-
-    <small>
-        ft
-    </small>
-</div>
-
-<div class="result-card">
-    <span>Refusal Speed - No Chute</span>
-    <strong id="refusalSpeed">PENDIENTE</strong>
-    <small>KIAS</small>
-</div>
-
-<div class="result-card">
-    <span>Critical Engine Failure Speed - No Chute</span>
-    <strong id="criticalEngineFailureSpeed">PENDIENTE</strong>
-    <small>KIAS</small>
-</div>
-
-</div>
-<br>
-
-
-        <!-- ========================= -->
-        <!-- FA2-2 -->
-        <!-- ========================= -->
-
-        <div class="section-title">
-
-            <div>
-
-                <h2>
-                  Takeoff Speed
-                </h2>
-
-            </div>
-
-
-        </div>
-
+        <!-- ================================================= -->
+        <!-- TAKEOFF FACTOR -->
+        <!-- ================================================= -->
 
         <div class="results-grid performance">
+
             <div>
-
-                <span>
-                    Takeoff Speed
-                </span>
-
-                <strong id="takeoffSpeed">
-                    —
-                </strong>
-
-                <small>
-                    KIAS
-                </small>
-
+                <span>Takeoff Factor</span>
+                <strong id="takeoffFactor">—</strong>
             </div>
-
-
-            <div>
-
-                <span>
-                    Aft Stick Speed
-                </span>
-
-                <strong id="aftStickSpeed">
-                    —
-                </strong>
-
-                <small>
-                    KIAS
-                </small>
-
-            </div>
-
-            <div>
-
-                <span>
-                    Obstacle Clearance Speed
-                </span>
-
-                <strong id="obstacleSpeed">
-                    —
-                </strong>
-
-                <small>
-                    KIAS
-                </small>
-
-            </div>
-
-
-
-
-
-            <div>
-
-                <span>
-                    Tire Limit Speed
-                </span>
-
-                <strong id="tireSpeed">
-                    —
-                </strong>
-
-                <small>
-                    KIAS
-                </small>
-
-            </div>
-
-            <div>
-
-    <span>
-        Single Engine Takeoff Speed
-    </span>
-
-    <strong id="setos">
-        —
-    </strong>
-
-    <small>
-        KIAS
-    </small>
-
-</div>
 
         </div>
 
-<br>
+        <br>
 
-<!-- ========================= -->
-<!-- TABLAS -->
-<!-- ========================= -->
+        <!-- ================================================= -->
+        <!-- A) TAKEOFF SPEED -->
+        <!-- ================================================= -->
 
-<div class="section-title">
-    <div>
-        <h2>5. TABLAS</h2>
+        <h2> A) TAKEOFF SPEED </h2>
+
+        <div class="results-grid performance">
+
+            <div>
+                <span>Takeoff Speed</span>
+                <strong id="takeoffSpeed">—</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div>
+                <span>Single Engine Takeoff Speed</span>
+                <strong id="setos">—</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div>
+                <span>Aft Stick Speed</span>
+                <strong id="aftStickSpeed">—</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div>
+                <span>Obstacle Clearance Speed</span>
+                <strong id="obstacleSpeed">—</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div class="result-card">
+                <span>Critical Engine Failure Speed - No Chute</span>
+                <strong id="criticalEngineFailureSpeed">PENDIENTE</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div class="result-card">
+                <span>Refusal Speed - No Chute</span>
+                <strong id="refusalSpeed">PENDIENTE</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div class="result-card">
+                <span>Critical Engine Failure Speed - Chute</span>
+                <strong id="criticalEngineFailureSpeedChute">PENDIENTE</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div class="result-card">
+                <span>Refusal Speed - Chute</span>
+                <strong id="refusalSpeedChute">PENDIENTE</strong>
+                <small>KIAS</small>
+            </div>
+
+            <div>
+                <span>Tire Limit Speed</span>
+                <strong id="tireSpeed">—</strong>
+                <small>KIAS</small>
+            </div>
+
+        </div>
+
+        <br>
+
+        <!-- ================================================= -->
+        <!-- B) GRADIENTES -->
+        <!-- ================================================= -->
+
+        <h2>B) GRADIENTES</h2>
+
+        <p class="muted">TREN ABAJO</p>
+
+        <div class="results-grid performance">
+
+            <div>
+                <span>Rate of Climb - Single Engine</span>
+                <strong id="gradientRateOfClimb">—</strong>
+                <small>ft/min</small>
+            </div>
+
+            <div>
+                <span>Gradient - Single Engine</span>
+                <strong id="gradientPercent">—</strong>
+                <small>%</small>
+            </div>
+
+            <div>
+                <span>Climb Gradient - Single Engine</span>
+                <strong id="gradientFtNm">—</strong>
+                <small>ft/NM</small>
+            </div>
+
+        </div>
+
+        <p class="muted">TREN ARRIBA</p>
+
+        <div class="results-grid performance">
+
+            <div>
+                <span>Rate of Climb</span>
+                <strong id="gradientArribaRateOfClimb">—</strong>
+                <small>ft/min</small>
+            </div>
+
+            <div>
+                <span>Gradient</span>
+                <strong id="gradientArribaPercent">—</strong>
+                <small>%</small>
+            </div>
+
+            <div>
+                <span>Climb Gradient</span>
+                <strong id="gradientArribaFtNm">—</strong>
+                <small>ft/NM</small>
+            </div>
+
+        </div>
+
+        <br>
+
+        <!-- ================================================= -->
+        <!-- C) DISTANCIAS -->
+        <!-- ================================================= -->
+
+        <h2>C) DISTANCIAS</h2>
+
+        <div class="results-grid performance">
+
+            <div>
+                <span>TOGR</span>
+                <strong id="togrResult">—</strong>
+                <small>ft</small>
+            </div>
+
+            <div>
+                <span>Critical Field Length - No Drag Chute</span>
+                <strong id="cflResult">—</strong>
+                <small>ft</small>
+            </div>
+
+            <div>
+                <span>Critical Field Length - Drag Chute</span>
+                <strong id="cflChuteResult">PENDIENTE</strong>
+                <small>ft</small>
+            </div>
+
+        </div>
+
+        <br>
+
+        <!-- ================================================= -->
+        <!-- D) CONTROL DE ACELERACIÓN -->
+        <!-- ================================================= -->
+
+        <h2>D) CONTROL DE ACELERACIÓN</h2>
+
         <p class="muted">
-            Haga clicl para ver el analisis en las tablas de performance
+            FA2-10 — Velocity During Takeoff Ground Run
         </p>
-    </div>
-</div>
 
-<div class="tables-buttons">
-<button
-    id="performanceBtn"
-    class="secondary"
->
-    Velocidades y Takeoff Factor <br> FA2-2 / FA2-3
-</button>
-    <button
-        id="viewGradientBtn"
-        class="secondary"
-    >
-        S-E Climb Gradiente - Gear Down <br> FA2-7
-    </button>
+        <div class="results-grid performance">
 
-    <button
-        id="setosBtn"
-        class="secondary"
-    >
-        Single Engine Takeoff Speed <br> FA2-6
-    </button>
+            <div>
+                <span>Método de control</span>
 
-    <button id="cflBtn" class="secondary">Critical Field Length - No Drag Chute <br> FA2-8</button>
+                <select
+                    id="accelerationControlMode"
+                    onchange="
+                        document.getElementById('accelerationDistanceBox').style.display =
+                            this.value === 'distance' ? 'block' : 'none';
 
-    <button id="refusalCefBtn" class="secondary">
-    Refusal Speed No Drag Chute <br> FA2-9
-</button>
+                        document.getElementById('accelerationCartelBox').style.display =
+                            this.value === 'cartel' ? 'block' : 'none';
 
-<br>
+                        if (typeof calculateAccelerationControl === 'function') {
+                            calculateAccelerationControl();
+                        }
+                    "
+                >
+                    <option value="distance">DISTANCIA</option>
+                    <option value="cartel" selected>CARTEL</option>
+                </select>
+            </div>
 
-</div>
+            <div
+                id="accelerationDistanceBox"
+                style="display:none;"
+            >
+                <span>Distancia de control</span>
+
+                <input
+                    id="accelerationDistance"
+                    type="number"
+                    min="0"
+                    max="14000"
+                    step="1"
+                    value="2000"
+                >
+
+                <small>ft recorridos</small>
+            </div>
+
+            <div id="accelerationCartelBox">
+                <span>Cartel de pista</span>
+                <select id="accelerationCartel"></select>
+            </div>
+
+            <div>
+                <span>Distancia calculada</span>
+                <strong id="accelerationControlDistance">—</strong>
+                <small>ft</small>
+            </div>
+
+            <div>
+                <span>Velocidad esperada</span>
+                <strong id="accelerationSpeed">PENDIENTE</strong>
+                <small>KIAS</small>
+            </div>
+
+        </div>
+
+        <br>
+
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- 5) TABLAS / RECORRIDOS -->
+    <!-- ===================================================== -->
+
+    <section class="card">
+
+        <h2>5. TABLAS DE PERFORMANCE</h2>
+
+        <div class="section-title">
+            <div>
+                <p class="muted">
+                    Haga clic en cada botón para ver el recorrido en la tabla de performance.
+                </p>
+            </div>
+        </div>
+
+        <!-- TAKEOFF / VELOCIDADES -->
+        <h3 class="subsection-title">TAKEOFF / VELOCIDADES</h3>
+
+        <div class="tables-buttons">
+
+            <button id="performanceBtn" class="secondary">
+                Velocidades y Takeoff Factor<br>FA2-2 / FA2-3
+            </button>
+
+            <button id="setosBtn" class="secondary">
+                Single Engine Takeoff Speed<br>FA2-6
+            </button>
+
+        </div>
+
+        <!-- GRADIENTES -->
+        <h3 class="subsection-title">GRADIENTES</h3>
+
+        <div class="tables-buttons">
+
+            <button id="viewGradientBtn" class="secondary">
+                S-E Climb Gradient - Gear Down<br>FA2-7
+            </button>
+
+            <button id="viewGradientArribaBtn" class="secondary">
+                S-E Climb Gradient - Gear Up<br>FA2-7
+            </button>
+
+        </div>
+
+        <!-- DISTANCIAS -->
+        <h3 class="subsection-title">DISTANCIAS</h3>
+
+        <div class="tables-buttons">
+
+            <button id="viewTogrBtn" class="secondary">
+                Carrera de despegue (TOGR)<br>FA2-4
+            </button>
+
+            <button id="cflBtn" class="secondary">
+                Critical Field Length - No Drag Chute<br>FA2-8
+            </button>
+
+        </div>
+
+        <!-- REFUSAL / CEF -->
+        <h3 class="subsection-title">REFUSAL / CEF</h3>
+
+        <div class="tables-buttons">
+
+            <button id="refusalCefBtn" class="secondary">
+                Refusal / CEF - No Drag Chute<br>FA2-9
+            </button>
+
+            <button id="refusalChuteBtn" class="secondary">
+                Refusal / CEF - With Drag Chute<br>FA2-9
+            </button>
+
+        </div>
+
+        <!-- ACELERACIÓN -->
+        <h3 class="subsection-title">CONTROL DE ACELERACIÓN</h3>
+
+        <div class="tables-buttons">
+
+            <button id="viewAccelerationBtn" class="secondary">
+                Control de aceleración<br>FA2-10
+            </button>
+
+        </div>
 
         <!-- ========================= -->
         <!-- TRAZABILIDAD -->
@@ -674,6 +744,7 @@
             id="calculationPanel"
             class="calculation hidden"
         >
+
 
             <h3>
                 Trazabilidad del cálculo
@@ -760,8 +831,16 @@
 <script src="cfl/cfl-engine.js"></script>
 <script src="refusal-cef/refusal-cef-engine.js"></script>
 <script src="data/FA23-TOLD-DIGITAL-ENGINE.js"></script>
+<script src="gradient-tren-arriba/gradient-data.js"></script>
+<script src="gradient-tren-arriba/gradient-engine.js"></script>
+<script src="togr/togr-data.js"></script>
+<script src="togr/togr-engine.js"></script>
+<script src="acceleration/acceleration-data.js"></script>
+<script src="acceleration/acceleration-engine.js"></script>
+<script src="refusal-cef/FA23_Refusal_Chute_Engine.js"></script>
 
 <script src="app.js"></script>
 
 </body>
+
 </html>
