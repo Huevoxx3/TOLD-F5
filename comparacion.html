@@ -1,0 +1,53 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Validación TOLD FA-23</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f7;color:#17212b;font-family:Arial,sans-serif}header{background:#111827;color:#fff;padding:28px 5vw}main{width:min(1450px,94vw);margin:22px auto 60px}.card,.chart{background:#fff;border:1px solid #d9dfe5;border-radius:12px;padding:18px;margin-bottom:18px}.chart{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px}.svg{width:100%;height:auto}.analysis{background:#f7fbff;border-left:4px solid #0b63ce;padding:12px;line-height:1.5}.legend{display:flex;gap:14px;flex-wrap:wrap;color:#66727d;font-size:13px}.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px}.grid{stroke:#e4e8ed}.axis{stroke:#9aa5b1}.txt{fill:#68737e;font-size:12px}.title{fill:#17212b;font-size:17px;font-weight:bold}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:7px;border-bottom:1px solid #ddd;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{background:#f7f8fa}.scroll{overflow:auto;max-height:520px}@media(max-width:900px){.chart{grid-template-columns:1fr}}
+</style></head><body>
+<header><h1>Comparacion Excel vs Sistema</h1></header><main>
+<section class="card"><h2>Alcance</h2><p>Solamente variacion de temperaturas: −5 a +40 °C.</p></section>
+<section class="card"><h2>Excel vs Sistema</h2><div id="charts"></div></section>
+<section class="card"><h2>Gradientes — tres series + referencias</h2><p>Único gráfico con tres entradas: Excel, Sistema Tren ABAJO y Sistema Tren ARRIBA. Se añaden referencias horizontales de 116 y 133 ft/NM.</p><div id="gradient"></div></section>
+<section class="card"><h2>Tabla de control</h2><div class="scroll"><table id="table"></table></div></section>
+</main>
+<script>
+const D={"temps": [-5, 0, 5, 10, 15, 20, 25, 30, 35, 40], "E": {"Aceleración": [142, 140, 139, 137, 134, 130, 128, 126, 123, 119], "REHUSE WITH": [180, 180, 180, 180, 180, 180, 180, 180, 178, 176], "REHUSE WITHOUT": [180, 180, 179, 178, 176, 173, 170, 167, 164, 160], "SETOS": [154, 154, 154, 154, 154, 154, 154, 154, 158, 162], "Gradiente": [583, 542, 497, 452, 379, 306, 244, 182, 120, 57], "T/O GND RUN": [2498, 2607, 2703, 2799, 2927, 3055, 3208, 3361, 3585, 3808], "CFL WITHOUT": [4056, 4352, 4505, 4658, 4891, 5123, 5379, 5634, 6003, 6371], "CFL WITH": [3910, 4043, 4193, 4343, 4569, 4794, 5010, 5225, 5531, 5837], "CEF WITHOUT PAR": [113, 114, 115, 116, 117, 118, 120, 121, 123, 125], "CEF WITH PAR": [128, 128, 129, 129, 131, 133, 135, 136, 138, 140], "T/O SPEED": [154, 154, 154, 154, 154, 154, 154, 154, 154, 154]}, "S": {"Aceleración": [140, 138, 135, 133, 130, 128, 125, 122, 120, 116], "REHUSE WITH": [180, 180, 180, 180, 180, 180, 180, 180, 178, 175], "REHUSE WITHOUT": [180, 180, 180, 179, 175, 172, 169, 165, 161, 157], "SETOS": [151, 151, 151, 151, 151, 151, 151, 152, 155, 160], "Gradiente Tren ABAJO": [340, 318, 287, 256, 223, 188, 152, 115, 66, 0], "Gradiente Tren ARRIBA": [636, 612, 585, 552, 514, 470, 421, 377, 324, 265], "T/O GND RUN": [2332, 2418, 2505, 2593, 2716, 2861, 3006, 3152, 3308, 3496], "CFL WITHOUT": [4149, 4295, 4463, 4632, 4803, 5041, 5279, 5533, 5857, 6237], "CFL WITH": [3853, 3994, 4134, 4273, 4470, 4681, 4893, 5106, 5430, 5748], "CEF WITHOUT PAR": [112, 112, 114, 115, 116, 117, 118, 120, 122, 124], "CEF WITH PAR": [null, null, 125, 126, 128, 129, 131, 133, 135, 137], "T/O SPEED": [151, 151, 151, 151, 151, 151, 151, 151, 151, 151]}},T=D.temps,E=D.E,S=D.S;
+function fmt(v){return v==null?'—':Number(v).toLocaleString('es-ES',{maximumFractionDigits:1});}
+function chartSVG(title,series,refs=[]){
+ const W=950,H=380,L=72,R=30,TT=48,B=62,all=[];
+ series.forEach(s=>s.v.forEach(x=>{if(x!=null)all.push(x)}));refs.forEach(r=>all.push(r.v));
+ let lo=Math.min(...all),hi=Math.max(...all),pad=(hi-lo||1)*.08;lo-=pad;hi+=pad;
+ const x=i=>L+i*(W-L-R)/(T.length-1),y=v=>TT+(hi-v)*(H-TT-B)/(hi-lo);
+ let z='<svg class="svg" viewBox="0 0 '+W+' '+H+'"><text x="'+(W/2)+'" y="25" text-anchor="middle" class="title">'+title+'</text>';
+ for(let j=0;j<=5;j++){let v=hi-j*(hi-lo)/5,yy=y(v);z+='<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" class="grid"/><text x="'+(L-8)+'" y="'+(yy+4)+'" text-anchor="end" class="txt">'+fmt(v)+'</text>'}
+ z+='<line x1="'+L+'" y1="'+TT+'" x2="'+L+'" y2="'+(H-B)+'" class="axis"/><line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" class="axis"/>';
+ T.forEach((v,i)=>z+='<text x="'+x(i)+'" y="'+(H-B+22)+'" text-anchor="middle" class="txt">'+v+'°C</text>');
+ series.forEach(s=>{let p='',on=false;s.v.forEach((v,i)=>{if(v==null){on=false;return}p+=(on?' L':' M')+' '+x(i)+' '+y(v);on=true});if(p)z+='<path d="'+p+'" fill="none" stroke="'+s.c+'" stroke-width="3" '+(s.d?'stroke-dasharray="9 6"':'')+'/>';s.v.forEach((v,i)=>{if(v!=null)z+='<circle cx="'+x(i)+'" cy="'+y(v)+'" r="4" fill="'+s.c+'"/>'})});
+ refs.forEach(r=>{let yy=y(r.v);z+='<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="'+r.c+'" stroke-width="2.5" stroke-dasharray="12 7"/><text x="'+(W-R-4)+'" y="'+(yy-6)+'" text-anchor="end" fill="'+r.c+'" font-size="12" font-weight="bold">'+r.l+'</text>'});
+ return z+'</svg>';
+}
+function add(title,keys,desc,refs=[]){
+ let s=keys.map((k,i)=>({label:k.l,v:k.v,c:k.c,d:k.d})),d=document.createElement('article');d.className='chart';
+ d.innerHTML='<div>'+chartSVG(title,s,refs)+'<div class="legend">'+s.map(q=>'<span><i style="background:'+q.c+'"></i>'+q.label+'</span>').join('')+refs.map(q=>'<span>'+q.l+'</span>').join('')+'</div></div><div class="analysis"><h3>Analizando un resultado</h3><p>'+desc+'</p></div>';return d}
+const C=document.getElementById('charts');
+function pair(title,e,s,unit){C.appendChild(add(title,[{l:'Excel',v:e,c:'#0b63ce'},{l:'Sistema',v:s,c:'#e07a00',d:true}], 'Unidad: '+unit+'. Comparación directa de las dos columnas suministradas.'))}
+pair('Check de Aceleración',E['Aceleración'],S['Aceleración'],'KIAS');
+pair('REHUSE CON',E['REHUSE WITH'],S['REHUSE WITH'],'KIAS');
+pair('REHUSE SIN',E['REHUSE WITHOUT'],S['REHUSE WITHOUT'],'KIAS');
+pair('SETOS',E.SETOS,S.SETOS,'KIAS');
+pair('T/O GND RUN',E['T/O GND RUN'],S['T/O GND RUN'],'ft');
+pair('CFL SIN',E['CFL WITHOUT'],S['CFL WITHOUT'],'ft');
+pair('CFL CON',E['CFL WITH'],S['CFL WITH'],'ft');
+pair('CEF SIN',E['CEF WITHOUT PAR'],S['CEF WITHOUT PAR'],'KIAS');
+pair('CEF CON',E['CEF WITH PAR'],S['CEF WITH PAR'],'KIAS');
+pair('T/O SPEED',E['T/O SPEED'],S['T/O SPEED'],'KIAS');
+document.getElementById('gradient').appendChild(add('SING. ENG. CLIMB GRADIENT / CLEARANCE SPEED',[
+ {l:'Excel',v:E.Gradiente,c:'#0b63ce'},
+ {l:'Sistema — Tren ABAJO',v:S['Gradiente Tren ABAJO'],c:'#e07a00',d:true},
+ {l:'Sistema — Tren ARRIBA',v:S['Gradiente Tren ARRIBA'],c:'#18864b'}
+],'Unidad: ft/NM. Las referencias 116 y 133 ft/NM son líneas horizontales solicitadas y no datos de ninguna de las tres series.',[
+ {l:'Referencia 116 ft/NM',v:116,c:'#7a3db8'},{l:'Referencia 133 ft/NM',v:133,c:'#c33b3b'}]));
+let cols=['Aceleración','REHUSE WITH','REHUSE WITHOUT','SETOS','Gradiente','Gradiente Tren ABAJO','Gradiente Tren ARRIBA','T/O GND RUN','CFL WITHOUT','CFL WITH','CEF WITHOUT PAR','CEF WITH PAR','T/O SPEED'];
+let t='<tr><th>Temperatura</th>'+cols.map(c=>'<th>Excel — '+c+'</th><th>Sistema — '+c+'</th>').join('')+'</tr>';
+T.forEach((temp,i)=>{t+='<tr><td>'+temp+' °C</td>';cols.forEach(c=>{let ev=E[c],sv=S[c];if(c==='Gradiente Tren ABAJO'||c==='Gradiente Tren ARRIBA'){ev=null} if(c==='Gradiente'){sv=null} t+='<td>'+fmt(ev&&Array.isArray(ev)?ev[i]:ev)+'</td><td>'+fmt(sv&&Array.isArray(sv)?sv[i]:sv)+'</td>'});t+='</tr>'});
+document.getElementById('table').innerHTML=t;
+</script></body></html>
