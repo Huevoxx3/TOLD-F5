@@ -455,25 +455,25 @@
             </div>
 
             <div class="result-card">
-                <span>Critical Engine Failure Speed - No Chute</span>
+                <span>CEFS - SIN</span>
                 <strong id="criticalEngineFailureSpeed">PENDIENTE</strong>
                 <small>KIAS</small>
             </div>
 
             <div class="result-card">
-                <span>Refusal Speed - No Chute</span>
+                <span>Refusal Speed - SIN</span>
                 <strong id="refusalSpeed">PENDIENTE</strong>
                 <small>KIAS</small>
             </div>
 
             <div class="result-card">
-                <span>Critical Engine Failure Speed - Chute</span>
+                <span>CEFS - CON</span>
                 <strong id="criticalEngineFailureSpeedChute">PENDIENTE</strong>
                 <small>KIAS</small>
             </div>
 
             <div class="result-card">
-                <span>Refusal Speed - Chute</span>
+                <span>Refusal Speed - CON</span>
                 <strong id="refusalSpeedChute">PENDIENTE</strong>
                 <small>KIAS</small>
             </div>
@@ -517,25 +517,25 @@
             </div>
 
         </div>
-
+<br>
         <p class="muted">TREN ARRIBA</p>
 
         <div class="results-grid performance">
 
             <div>
-                <span>Rate of Climb</span>
+                <span>Rate of Climb - Single Engine</span>
                 <strong id="gradientArribaRateOfClimb">—</strong>
                 <small>ft/min</small>
             </div>
 
             <div>
-                <span>Gradient</span>
+                <span>Gradient - Single Engine</span>
                 <strong id="gradientArribaPercent">—</strong>
                 <small>%</small>
             </div>
 
             <div>
-                <span>Climb Gradient</span>
+                <span>Climb Gradient - Single Engine</span>
                 <strong id="gradientArribaFtNm">—</strong>
                 <small>ft/NM</small>
             </div>
@@ -553,19 +553,19 @@
         <div class="results-grid performance">
 
             <div>
-                <span>TOGR</span>
+                <span>Takeoff Ground Run</span>
                 <strong id="togrResult">—</strong>
                 <small>ft</small>
             </div>
 
             <div>
-                <span>Critical Field Length - No Drag Chute</span>
+                <span>Critical Field Length - W/O CHUTE</span>
                 <strong id="cflResult">—</strong>
                 <small>ft</small>
             </div>
 
             <div>
-                <span>Critical Field Length - Drag Chute</span>
+                <span>Critical Field Length - CHUTE</span>
                 <strong id="cflChuteResult">PENDIENTE</strong>
                 <small>ft</small>
             </div>
@@ -581,7 +581,7 @@
         <h2>D) CONTROL DE ACELERACIÓN</h2>
 
         <p class="muted">
-            FA2-10 — Velocity During Takeoff Ground Run
+            Seleccione CARTEL o DISTANCIA para el Check de aceleración
         </p>
 
         <div class="results-grid performance">
@@ -632,13 +632,13 @@
             </div>
 
             <div>
-                <span>Distancia calculada</span>
+                <span>Distancia de control</span>
                 <strong id="accelerationControlDistance">—</strong>
                 <small>ft</small>
             </div>
 
             <div>
-                <span>Velocidad esperada</span>
+                <span>Velocidad de control</span>
                 <strong id="accelerationSpeed">PENDIENTE</strong>
                 <small>KIAS</small>
             </div>
@@ -707,6 +707,10 @@
             <button id="cflBtn" class="secondary">
                 Critical Field Length - No Drag Chute<br>FA2-8
             </button>
+
+            <button id="cflChuteBtn" class="secondary">
+    Critical Field Length - With Drag Chute<br>FA2-8
+</button>
 
         </div>
 
@@ -838,6 +842,8 @@
 <script src="acceleration/acceleration-data.js"></script>
 <script src="acceleration/acceleration-engine.js"></script>
 <script src="refusal-cef/FA23_Refusal_Chute_Engine.js"></script>
+<script src="data/FA23-CFL-WithDragChute-data.js"></script>
+<script src="cfl/cfl-drag-chute-engine.js"></script>
 
 <script src="app.js"></script>
 

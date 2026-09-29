@@ -1413,6 +1413,95 @@ if (cflResult.valid) {
  
 }
 
+// =================================================
+// FA23 — CRITICAL FIELD LENGTH — WITH DRAG CHUTE
+// =================================================
+
+const cflChuteElement =
+    $("cflChuteResult");
+
+if (
+    cflChuteElement &&
+    takeoffFactorResult.valid &&
+    typeof window.calculateFA23CFLDC === "function"
+) {
+
+    try {
+
+        const cflChuteResult =
+            window.calculateFA23CFLDC({
+
+                takeoffFactor:
+                    takeoffFactorResult.factor,
+
+                grossWeight:
+                    grossWeight,
+
+                cg:
+                    cg,
+
+                headwind:
+                    Math.max(
+                        0,
+                        wind.headwind
+                    ),
+
+                tailwind:
+                    Math.max(
+                        0,
+                        wind.tailwind
+                    ),
+
+                rcr:
+                    rcr
+
+            });
+
+        if (cflChuteResult.valid) {
+
+            cflChuteElement.textContent =
+                Math.round(
+                    cflChuteResult.result.cflFt
+                ).toLocaleString("es-ES");
+
+            console.log(
+                "CFL WITH DRAG CHUTE:",
+                cflChuteResult.result.cflFt,
+                "ft"
+            );
+
+        } else {
+
+            cflChuteElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "CFL WITH DRAG CHUTE:",
+                cflChuteResult.message
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error calculando CFL WITH DRAG CHUTE:",
+            error
+        );
+
+        cflChuteElement.textContent =
+            "PENDIENTE";
+    }
+
+} else {
+
+    if (cflChuteElement) {
+        cflChuteElement.textContent =
+            "PENDIENTE";
+    }
+
+}
+
         // =================================================
 // FA23 — REFUSAL SPEED / CRITICAL ENGINE FAILURE SPEED
 // RESULTADOS PRINCIPALES DEL TOLD
@@ -1568,13 +1657,21 @@ const refusalRunwayLength =
         // MOSTRAR RESULTADOS
         // -------------------------------------------------
 
-        refusalElement.textContent =
-            result.result.refusalSpeed
-                .toFixed(1);
+refusalElement.textContent =
+    result.result.refusalDisplay;
 
-        cefElement.textContent =
-            result.result.criticalEngineFailureSpeed
-                .toFixed(1);
+cefElement.textContent =
+    result.result.cefDisplay;
+
+refusalElement.classList.toggle(
+    "over-limit",
+    result.result.refusalOver180
+);
+
+cefElement.classList.toggle(
+    "over-limit",
+    result.result.cefOver180
+);
 
         console.log(
             "REFUSAL SPEED:",
@@ -1662,9 +1759,9 @@ async function updateMainRefusalChute() {
     // -------------------------------------------------
 
     const cflText =
-        $("cflResult")
-            ? $("cflResult").textContent
-            : "";
+    $("cflChuteResult")
+        ? $("cflChuteResult").textContent
+        : "";
 
     const chuteCFL =
         Number(
@@ -2441,6 +2538,100 @@ if (cflButton) {
 }
 
 // =================================================
+// FA23 — CFL WITH DRAG CHUTE — VER RECORRIDO
+// =================================================
+
+const cflChuteButton =
+    $("cflChuteBtn");
+
+if (cflChuteButton) {
+
+    cflChuteButton.onclick = function () {
+
+        // Verificar Takeoff Factor
+        if (!takeoffFactorResult.valid) {
+
+            alert(
+                "No se puede abrir el recorrido CFL WITH DRAG CHUTE porque el Takeoff Factor está pendiente."
+            );
+
+            return;
+        }
+
+        // Datos actuales del TOLD
+        const cflChuteTOF =
+            takeoffFactorResult.factor;
+
+        const cflChuteGW =
+            grossWeight;
+
+        const cflChuteCG =
+            cg;
+
+        const cflChuteRCR =
+            rcr;
+
+        // Viento
+        const headwind =
+            Math.max(
+                0,
+                wind.headwind
+            );
+
+        const tailwind =
+            Math.max(
+                0,
+                wind.tailwind
+            );
+
+        // Verificar que exista el CFL WITH DRAG CHUTE
+        const cflChuteElement =
+            $("cflChuteResult");
+
+        if (!cflChuteElement) {
+
+            alert(
+                "No se encontró el resultado CFL WITH DRAG CHUTE del TOLD."
+            );
+
+            return;
+        }
+
+        const cflChuteValue =
+            Number(
+                cflChuteElement.textContent
+                    .replace(/\./g, "")
+                    .replace(",", ".")
+            );
+
+        if (!Number.isFinite(cflChuteValue)) {
+
+            alert(
+                "El CFL WITH DRAG CHUTE actual no es válido."
+            );
+
+            return;
+        }
+
+        // Construir URL
+        const url =
+            "cfl/cfl-view-drag-chute.html" +
+            `?tof=${encodeURIComponent(cflChuteTOF)}` +
+            `&gw=${encodeURIComponent(cflChuteGW)}` +
+            `&cg=${encodeURIComponent(cflChuteCG)}` +
+            `&rcr=${encodeURIComponent(cflChuteRCR)}` +
+            `&headwind=${encodeURIComponent(headwind)}` +
+            `&tailwind=${encodeURIComponent(tailwind)}`;
+
+        // Abrir recorrido
+        window.open(
+            url,
+            "_blank"
+        );
+    };
+}
+
+// =================================================
 // FA23 — REFUSAL SPEED / CRITICAL ENGINE FAILURE SPEED
 // =================================================
 
@@ -2621,7 +2812,7 @@ if (refusalChuteButton) {
         // -------------------------------------------------
 
         const cflElement =
-            $("cflResult");
+    $("cflChuteResult");
 
         if (!cflElement) {
 
