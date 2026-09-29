@@ -29,14 +29,32 @@ function yAtX(points,x){
 }
 function xAtY(points,y){
   if(!points || points.length<2)return null;
+
   const p=[...points].sort((a,b)=>a.yPixel-b.yPixel);
+
   for(let i=0;i<p.length-1;i++){
     if(y>=p[i].yPixel-EPS && y<=p[i+1].yPixel+EPS)
       return lineX(p[i],p[i+1],y);
   }
-  if(y>=p[0].yPixel-EPS*4 && y<p[0].yPixel)return lineX(p[0],p[1],y);
-  if(y<=p[p.length-1].yPixel+EPS*4 && y>p[p.length-1].yPixel)
-    return lineX(p[p.length-2],p[p.length-1],y);
+
+  // Extrapolación controlada por debajo del último punto
+  if(y>p[p.length-1].yPixel){
+    return lineX(
+      p[p.length-2],
+      p[p.length-1],
+      y
+    );
+  }
+
+  // Extrapolación controlada por encima del primer punto
+  if(y<p[0].yPixel){
+    return lineX(
+      p[0],
+      p[1],
+      y
+    );
+  }
+
   return null;
 }
 function xScale(points,a,b,v){
