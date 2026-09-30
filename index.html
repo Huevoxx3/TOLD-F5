@@ -284,7 +284,6 @@
     </section>
 
 
-
     <!-- ===================================================== -->
     <!-- C) DATOS DEL AVIÓN -->
     <!-- ===================================================== -->
@@ -296,38 +295,98 @@
         <div class="grid">
 
 
-            <label>
-                Peso bruto
+<!-- CONFIGURACIÓN DEL AVIÓN -->
 
-                <div class="input-unit">
+<div class="input-group">
 
-                    <input
-                        id="grossWeight"
-                        type="number"
-                        value="13900"
-                    >
+    <label for="aircraftConfig">
+        Configuración
+    </label>
 
-                    <span>lb</span>
+    <select id="aircraftConfig">
 
-                </div>
-            </label>
+        <option value="TIPS" selected>
+            TIPS
+        </option>
+
+        <option value="TIPS + CL">
+            TIPS + CL
+        </option>
+
+        <option value="TIPS + INBOARD">
+            TIPS + INBOARD
+        </option>
+
+        <option value="MANUAL">
+            MANUAL
+        </option>
+
+    </select>
+
+</div>
 
 
-            <label>
-                CG
+<!-- CABINA B -->
 
-                <div class="input-unit">
+<label class="switch-row">
 
-                    <input
-                        id="cg"
-                        type="number"
-                        value="17.2"
-                    >
+    <span class="switch-label">
+        Cabina B ocupada
+    </span>
 
-                    <span>% MAC</span>
+    <span class="switch">
+        <input
+            type="checkbox"
+            id="cabinB"
+            checked
+        >
 
-                </div>
-            </label>
+        <span class="slider"></span>
+    </span>
+
+</label>
+
+
+<!-- PESO BRUTO -->
+
+<label>
+
+    Peso bruto
+
+    <div class="input-unit">
+
+        <input
+            id="grossWeight"
+            type="number"
+            value="0"
+        >
+
+        <span>lb</span>
+
+    </div>
+
+</label>
+
+
+<!-- CG -->
+
+<label>
+
+    CG
+
+    <div class="input-unit">
+
+        <input
+            id="cg"
+            type="number"
+            value="0"
+        >
+
+        <span>% MAC</span>
+
+    </div>
+
+</label>
 
 
             <div class="input-group">
@@ -379,6 +438,84 @@
 
     </section>
 
+    <!-- ===================================================== -->
+    <!-- Check de aceleracion -->
+    <!-- ===================================================== -->
+
+<section class="card">
+
+        <h2>4. CHECK DE ACELERACION</h2>
+
+        <p class="muted">
+            Seleccione CARTEL o DISTANCIA para el Check de aceleración
+        </p>
+
+        <div class="results-grid performance">
+
+            <div>
+                <span>Método de control</span>
+
+                <select
+                    id="accelerationControlMode"
+                    onchange="
+                        document.getElementById('accelerationDistanceBox').style.display =
+                            this.value === 'distance' ? 'block' : 'none';
+
+                        document.getElementById('accelerationCartelBox').style.display =
+                            this.value === 'cartel' ? 'block' : 'none';
+
+                        if (typeof calculateAccelerationControl === 'function') {
+                            calculateAccelerationControl();
+                        }
+                    "
+                >
+                    <option value="distance">DISTANCIA</option>
+                    <option value="cartel" selected>CARTEL</option>
+                </select>
+            </div>
+
+            <div
+                id="accelerationDistanceBox"
+                style="display:none;"
+            >
+                <span>Distancia de control</span>
+
+                <input
+                    id="accelerationDistance"
+                    type="number"
+                    min="0"
+                    max="14000"
+                    step="1"
+                    value="2000"
+                >
+
+                <small>ft recorridos</small>
+            </div>
+
+            <div id="accelerationCartelBox">
+                <span>Cartel de pista</span>
+                <select id="accelerationCartel"></select>
+            </div>
+
+            <div>
+                <span>Distancia de control</span>
+                <strong id="accelerationControlDistance">—</strong>
+                <small>ft</small>
+            </div>
+
+            <div>
+                <span>Velocidad de control</span>
+                <strong id="accelerationSpeed">PENDIENTE</strong>
+                <small>KIAS</small>
+            </div>
+
+        </div>
+
+        <br>
+        <div class="grid">
+
+</section>
+
 
 
     <!-- ===================================================== -->
@@ -403,7 +540,7 @@
 
         <div class="section-title">
             <div>
-                <h2>4. TAKEOFF PERFORMANCE</h2>
+                <h2>5. TAKEOFF PERFORMANCE</h2>
             </div>
         </div>
 
@@ -572,80 +709,9 @@
 
         </div>
 
-        <br>
 
-        <!-- ================================================= -->
-        <!-- D) CONTROL DE ACELERACIÓN -->
-        <!-- ================================================= -->
 
-        <h2>D) CONTROL DE ACELERACIÓN</h2>
-
-        <p class="muted">
-            Seleccione CARTEL o DISTANCIA para el Check de aceleración
-        </p>
-
-        <div class="results-grid performance">
-
-            <div>
-                <span>Método de control</span>
-
-                <select
-                    id="accelerationControlMode"
-                    onchange="
-                        document.getElementById('accelerationDistanceBox').style.display =
-                            this.value === 'distance' ? 'block' : 'none';
-
-                        document.getElementById('accelerationCartelBox').style.display =
-                            this.value === 'cartel' ? 'block' : 'none';
-
-                        if (typeof calculateAccelerationControl === 'function') {
-                            calculateAccelerationControl();
-                        }
-                    "
-                >
-                    <option value="distance">DISTANCIA</option>
-                    <option value="cartel" selected>CARTEL</option>
-                </select>
-            </div>
-
-            <div
-                id="accelerationDistanceBox"
-                style="display:none;"
-            >
-                <span>Distancia de control</span>
-
-                <input
-                    id="accelerationDistance"
-                    type="number"
-                    min="0"
-                    max="14000"
-                    step="1"
-                    value="2000"
-                >
-
-                <small>ft recorridos</small>
-            </div>
-
-            <div id="accelerationCartelBox">
-                <span>Cartel de pista</span>
-                <select id="accelerationCartel"></select>
-            </div>
-
-            <div>
-                <span>Distancia de control</span>
-                <strong id="accelerationControlDistance">—</strong>
-                <small>ft</small>
-            </div>
-
-            <div>
-                <span>Velocidad de control</span>
-                <strong id="accelerationSpeed">PENDIENTE</strong>
-                <small>KIAS</small>
-            </div>
-
-        </div>
-
-        <br>
+        
 
     </section>
 
@@ -844,6 +910,7 @@
 <script src="refusal-cef/FA23_Refusal_Chute_Engine.js"></script>
 <script src="data/FA23-CFL-WithDragChute-data.js"></script>
 <script src="cfl/cfl-drag-chute-engine.js"></script>
+<script src="data/aircraft-config.js"></script>
 
 <script src="app.js"></script>
 

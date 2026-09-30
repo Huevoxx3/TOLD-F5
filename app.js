@@ -491,7 +491,126 @@ function $(id) {
 
 }
 
+// =====================================================
+// FA23 — CONFIGURACIÓN DEL AVIÓN
+// =====================================================
 
+const aircraftConfigSelect =
+    $("aircraftConfig");
+
+const cabinBCheckbox =
+    $("cabinB");
+
+const grossWeightInput =
+    $("grossWeight");
+
+const cgInput =
+    $("cg");
+
+
+// =====================================================
+// ACTUALIZAR PESO Y CG SEGÚN CONFIGURACIÓN
+// =====================================================
+
+function updateAircraftConfiguration() {
+
+    if (
+        !aircraftConfigSelect ||
+        !cabinBCheckbox ||
+        !grossWeightInput ||
+        !cgInput
+    ) {
+        return;
+    }
+
+
+    const configuration =
+        aircraftConfigSelect.value;
+
+
+    // -------------------------------------------------
+    // MODO MANUAL
+    // -------------------------------------------------
+
+    if (configuration === "MANUAL") {
+
+        grossWeightInput.disabled = false;
+        cgInput.disabled = false;
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // CONFIGURACIÓN AUTOMÁTICA
+    // -------------------------------------------------
+
+    const aircraftData =
+        window.FA23_AIRCRAFT_CONFIG?.[configuration];
+
+
+    if (!aircraftData) {
+
+        grossWeightInput.disabled = false;
+        cgInput.disabled = false;
+
+        return;
+    }
+
+
+    const data =
+        cabinBCheckbox.checked
+            ? aircraftData.cabinB
+            : aircraftData.normal;
+
+
+    if (!data) {
+        return;
+    }
+
+
+    grossWeightInput.value =
+        data.grossWeight;
+
+    cgInput.value =
+        data.cg;
+
+
+    grossWeightInput.disabled = true;
+    cgInput.disabled = true;
+
+
+    // Recalcular todo el TOLD
+    calculate();
+
+}
+
+
+// =====================================================
+// EVENTOS DE CONFIGURACIÓN
+// =====================================================
+
+if (aircraftConfigSelect) {
+
+    aircraftConfigSelect.addEventListener(
+        "change",
+        updateAircraftConfiguration
+    );
+
+}
+
+
+if (cabinBCheckbox) {
+
+    cabinBCheckbox.addEventListener(
+        "change",
+        updateAircraftConfiguration
+    );
+
+}
+
+// Cargar la configuración inicial al abrir la página
+updateAircraftConfiguration();
 
 // =====================================================
 // NORMALIZAR RUMBO
