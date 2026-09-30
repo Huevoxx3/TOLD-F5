@@ -910,3 +910,43 @@ select:focus {
 .switch input:checked + .slider::before {
     transform: translateX(22px);
 }
+
+/* =========================================
+   METAR — AERÓDROMO
+   ========================================= */
+
+.metar-display {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #64748b;
+
+    overflow-wrap: anywhere;
+}
+
+.metar-label {
+    font-weight: 700;
+    color: #102a43;
+    margin-right: 8px;
+}
+
+.metar-age {
+    margin-left: 8px;
+    font-weight: 600;
+}
+
+.metar-fresh {
+    color: #64748b;
+}
+
+.metar-warning {
+    color: #d97706;
+}
+
+.metar-old {
+    color: #dc2626;
+}

@@ -320,8 +320,197 @@ const aerodromes = {
 };
 
 // =====================================================
+// METAR — IDENTIFICADORES ICAO
+// =====================================================
+
+const aerodromeICAO = {
+
+    badajoz: "LEBZ",
+    moron: "LEMO",
+    beja: "LPBJ",
+    valladolid: "LEVD",
+    sevilla: "LEZL",
+    rota: "LERT",
+    torrejon: "LETO",
+    getafe: "LEGT",
+    zaragoza: "LEZG",
+    san_javier: "LELC",
+    salamanca: "LESA",
+    albacete: "LEAB"
+
+};
+
+// =====================================================
+// OBTENER METAR
+// =====================================================
+
+const AVWX_API_KEY = "SYybZksTKoBvX_zwxGfEV1PYOtstVhCVgysShs-_Vg4";
+
+
+async function updateMETAR() {
+
+    const metarElement =
+        $("metarText");
+
+    const ageElement =
+        $("metarAge");
+
+    if (!metarElement) {
+        return;
+    }
+
+    const aerodromeKey =
+        aerodromeSelect.value;
+
+    const icao =
+        aerodromeICAO[aerodromeKey];
+
+    if (!icao) {
+
+        metarElement.textContent =
+            "METAR no disponible";
+
+        if (ageElement) {
+            ageElement.textContent = "";
+        }
+
+        return;
+    }
+
+    metarElement.textContent =
+        "Consultando...";
+
+    if (ageElement) {
+        ageElement.textContent = "";
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `https://avwx.rest/api/metar/${icao}?token=${AVWX_API_KEY}`
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Error consultando AVWX"
+            );
+        }
+
+        const data =
+            await response.json();
+
+        metarElement.textContent =
+            data?.raw ||
+            "METAR no disponible";
+
+
+// ---------------------------------------------
+// ANTIGÜEDAD DEL METAR
+// ---------------------------------------------
+
+if (ageElement && data?.time) {
+
+    const observedAt =
+        new Date(
+            data.time?.dt || data.time
+        );
+
+    if (!Number.isNaN(observedAt.getTime())) {
+
+        const ageMinutes =
+            (
+                Date.now() -
+                observedAt.getTime()
+            ) / 60000;
+
+
+        ageElement.classList.remove(
+            "metar-fresh",
+            "metar-warning",
+            "metar-old"
+        );
+
+
+        if (ageMinutes > 60) {
+
+            ageElement.classList.add(
+                "metar-old"
+            );
+
+        }
+        else if (ageMinutes > 30) {
+
+            ageElement.classList.add(
+                "metar-warning"
+            );
+
+        }
+        else {
+
+            ageElement.classList.add(
+                "metar-fresh"
+            );
+
+        }
+
+
+        if (ageMinutes < 60) {
+
+            ageElement.textContent =
+                `   ---   Información de hace -  ${Math.floor(ageMinutes)} min`;
+
+        }
+        else {
+
+            const hours =
+                Math.floor(ageMinutes / 60);
+
+            const minutes =
+                Math.floor(ageMinutes % 60);
+
+            ageElement.textContent =
+                minutes > 0
+                    ? `hace ${hours} h ${String(minutes).padStart(2, "0")} min`
+                    : `hace ${hours} h`;
+
+        }
+
+    }
+    else {
+
+        ageElement.textContent = "";
+
+    }
+
+}
+    } catch (error) {
+
+        console.error(
+            "Error obteniendo METAR:",
+            error
+        );
+
+        metarElement.textContent =
+            "METAR no disponible";
+
+        if (ageElement) {
+            ageElement.textContent = "";
+        }
+
+    }
+
+}
+
+setInterval(
+    updateMETAR,
+    10 * 60 * 1000
+);
+
+// =====================================================
 // CARGAR AERÓDROMOS EN EL SELECT
 // =====================================================
+
 
 const aerodromeSelect = $("aerodrome");
 
@@ -450,6 +639,8 @@ aerodromeSelect.addEventListener(
             }
         );
         calculate();
+
+        updateMETAR();
     }
 );
 
