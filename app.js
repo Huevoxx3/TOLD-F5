@@ -476,6 +476,11 @@ aerodromeSelect.dispatchEvent(
     new Event("change")
 );
 
+runwaySelect.value = "31";
+
+runwaySelect.dispatchEvent(
+    new Event("change")
+);
 // =====================================================
 // ATAJO PARA ELEMENTOS HTML
 // =====================================================

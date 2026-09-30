@@ -38,11 +38,72 @@
     const baselineX=(D.elements.baseline[0].xPixel+D.elements.baseline[1].xPixel)/2;
     const guidelineEntries=Object.keys(D.elements.guidelines).map(Number).sort((a,b)=>a-b).map(n=>({n,line:D.elements.guidelines[String(n)],yBase:yAtX(D.elements.guidelines[String(n)],baselineX,8)})).filter(g=>g.yBase!==null);
     if(guidelineEntries.length<2)return fail('No hay suficientes guidelines digitalizadas para interpolar.');
-    let gA=null,gB=null,gT=0;for(let i=0;i<guidelineEntries.length-1;i++){const a=guidelineEntries[i],b=guidelineEntries[i+1],min=Math.min(a.yBase,b.yBase),max=Math.max(a.yBase,b.yBase);if(yReference>=min-1e-6&&yReference<=max+1e-6){gA=a;gB=b;gT=(yReference-a.yBase)/(b.yBase-a.yBase);break;}}
-    if(!gA){const f=guidelineEntries[0],l=guidelineEntries[guidelineEntries.length-1];if(Math.abs(yReference-f.yBase)<1){gA=f;gB=f;}else if(Math.abs(yReference-l.yBase)<1){gA=l;gB=l;}else return fail('La intersección con la Baseline queda fuera del rango de las 9 guidelines.');}
+    let gA=null,gB=null,gT=0;
+let guidelineExtrapolated=false;
+
+for(let i=0;i<guidelineEntries.length-1;i++){
+  const a=guidelineEntries[i],
+        b=guidelineEntries[i+1],
+        min=Math.min(a.yBase,b.yBase),
+        max=Math.max(a.yBase,b.yBase);
+
+  if(yReference>=min-1e-6&&yReference<=max+1e-6){
+    gA=a;
+    gB=b;
+    gT=(yReference-a.yBase)/(b.yBase-a.yBase);
+    break;
+  }
+}
+
+/* 
+   Si el punto queda por debajo de la última guideline,
+   continuamos la tendencia usando las guidelines 8 → 9.
+*/
+if(!gA){
+
+  const first=guidelineEntries[0];
+  const last=guidelineEntries[guidelineEntries.length-1];
+
+  // Cerca de la primera guideline
+  if(Math.abs(yReference-first.yBase)<1){
+
+    gA=first;
+    gB=first;
+    gT=0;
+
+  }
+  // Cerca de la última guideline
+  else if(Math.abs(yReference-last.yBase)<1){
+
+    gA=last;
+    gB=last;
+    gT=0;
+
+  }
+  // Por debajo de la última guideline:
+  // extrapolamos siguiendo la tendencia de 8 → 9
+  else if(yReference > last.yBase){
+
+    gA=guidelineEntries[guidelineEntries.length-2];
+    gB=guidelineEntries[guidelineEntries.length-1];
+
+    gT=(yReference-gA.yBase)/
+       (gB.yBase-gA.yBase);
+
+    guidelineExtrapolated=true;
+
+  }
+  else{
+
+    return fail(
+      'La intersección con la Baseline queda fuera del rango de las guidelines.'
+    );
+
+  }
+}
     const xTail=scaleX(SCALES.tailwind,tailwind),yA=yAtX(gA.line,xTail,3),yB=yAtX(gB.line,xTail,3);if(yA===null||yB===null)return fail('El Tailwind queda fuera del tramo de las guidelines necesarias.');
     const yTail=gA===gB?yA:lerp(yA,yB,gT),gradient=valueY(SCALES.gradient,yTail),ftNm=valueY(SCALES.ftNm,yTail);
-    return {valid:true,inputs:{takeoffFactor:tof,pressureAltitude:pa,grossWeight:gw,tailwind},result:{rateOfClimb:roc,gradientPercent:gradient,gradientFtNm:ftNm},interpolation:{pressureAltitude:{lower:paBracket.lo,upper:paBracket.hi,fraction:paBracket.t},grossWeight:{lower:gwBracket.lo,upper:gwBracket.hi,fraction:gwBracket.t},guideline:{lower:gA.n,upper:gB.n,fraction:gT}},path:{tofAxis:{x:xTOF,y:yTOFAxis},tof:{x:xTOF,y:yPA},paLower:{x:xTOF,y:yLo},paUpper:{x:xTOF,y:yHi},gw:{x:xGW,y:yPA},roc:{x:xGW,y:SCALES.roc.y},reference:{x:xGW,y:yReference},baseline:{x:baselineX,y:yReference},guidelineBase:{x:baselineX,y:yReference},guidelineLowerBase:{x:baselineX,y:gA.yBase},guidelineUpperBase:{x:baselineX,y:gB.yBase},guidelineTail:{x:xTail,y:yTail},gradient:{x:SCALES.gradient.x,y:yTail},ftNm:{x:SCALES.ftNm.x,y:yTail}},guideline:{lower:gA.n,upper:gB.n,fraction:gT}};
+    return {valid:true,inputs:{takeoffFactor:tof,pressureAltitude:pa,grossWeight:gw,tailwind},result:{rateOfClimb:roc,gradientPercent:gradient,gradientFtNm:ftNm},interpolation:{pressureAltitude:{lower:paBracket.lo,upper:paBracket.hi,fraction:paBracket.t},grossWeight:{lower:gwBracket.lo,upper:gwBracket.hi,fraction:gwBracket.t},guideline:{lower:gA.n,upper:gB.n,fraction:gT,extrapolated:guidelineExtrapolated}},path:{tofAxis:{x:xTOF,y:yTOFAxis},tof:{x:xTOF,y:yPA},paLower:{x:xTOF,y:yLo},paUpper:{x:xTOF,y:yHi},gw:{x:xGW,y:yPA},roc:{x:xGW,y:SCALES.roc.y},reference:{x:xGW,y:yReference},baseline:{x:baselineX,y:yReference},guidelineBase:{x:baselineX,y:yReference},guidelineLowerBase:{x:baselineX,y:gA.yBase},guidelineUpperBase:{x:baselineX,y:gB.yBase},guidelineTail:{x:xTail,y:yTail},gradient:{x:SCALES.gradient.x,y:yTail},ftNm:{x:SCALES.ftNm.x,y:yTail}},guideline:{lower:gA.n,upper:gB.n,fraction:gT}};
   }
   window.calculateFA23GradientTrenArriba=calculateFA23GradientTrenArriba;
   window.FA23GradientTrenArribaEngine={calculateFA23GradientTrenArriba};
