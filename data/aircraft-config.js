@@ -17,13 +17,13 @@ window.FA23_AIRCRAFT_CONFIG = {
     "TIPS VACIOS": {
 
         normal: {
-            grossWeight: 0,
-            cg: 0
+            grossWeight: 12980,
+            cg: 17.46
         },
 
         cabinB: {
-            grossWeight: 0,
-            cg: 0
+            grossWeight: 13255,
+            cg: 15.33
         }
 
     },
@@ -31,13 +31,13 @@ window.FA23_AIRCRAFT_CONFIG = {
     "TIPS + CL PYLON": {
 
         normal: {
-            grossWeight: 0,
-            cg: 0
+            grossWeight: 13995,
+            cg: 18.72
         },
 
         cabinB: {
-            grossWeight: 0,
-            cg: 0
+            grossWeight: 14270,
+            cg: 16.62
         }
 
     },
@@ -45,13 +45,13 @@ window.FA23_AIRCRAFT_CONFIG = {
     "TIPS + CL 50": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14478,
+            cg: 16.15
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14753,
+            cg: 14.12
         }
 
     },
@@ -59,13 +59,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + CL 150": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 15148,
+            cg: 12.58
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 15423,
+            cg: 10.65
         }
 
     },
@@ -73,13 +73,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + CL 0": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14143,
+            cg: 17.93
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14418,
+            cg: 15.85
         }
 
     },
@@ -87,13 +87,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + SUU-20": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14271,
+            cg: 17.25
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14546,
+            cg: 15.19
         }
 
     },
@@ -101,13 +101,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + SUU-20 CON BE-6": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14331,
+            cg: 16.93
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14606,
+            cg: 14.88
         }
 
     },
@@ -116,13 +116,13 @@ window.FA23_AIRCRAFT_CONFIG = {
     "TIPS + SUU-20 CON BE-11": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14421,
+            cg: 16.45
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14696,
+            cg: 14.41
         }
 
     },
@@ -130,13 +130,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + PYLON INBOARD": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14094,
+            cg: 19.55
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14369,
+            cg: 17.46
         }
 
     },
@@ -144,13 +144,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + TANK INBOARD 150": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 16410,
+            cg: 21.34
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 16685,
+            cg: 19.6
         }
 
     },
@@ -158,13 +158,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + PYLON OUTBOARD": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 14108,
+            cg: 19.36
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 14383,
+            cg: 17.27
         }
 
     },
@@ -172,13 +172,13 @@ window.FA23_AIRCRAFT_CONFIG = {
         "TIPS + MK-82 OUTBOARD": {
 
         normal: {
-            grossWeight: 13900,
-            cg: 17.2
+            grossWeight: 15170,
+            cg: 19.65
         },
 
         cabinB: {
-            grossWeight: 14500,
-            cg: 18
+            grossWeight: 15445,
+            cg: 17.72
         }
 
     },
