@@ -1363,6 +1363,37 @@ if (takeoffFactorResult.valid) {
 }
 
 // =================================================
+// FA23 — TRIM SET
+// =================================================
+
+const trimSetElement = $("trimSet");
+
+if (trimSetElement) {
+
+    if (cg > 20) {
+
+        trimSetElement.textContent = "7";
+
+    }
+    else if (cg >= 17) {
+
+        trimSetElement.textContent = "8";
+
+    }
+    else if (cg >= 12) {
+
+        trimSetElement.textContent = "9";
+
+    }
+    else {
+
+        trimSetElement.textContent = "10";
+
+    }
+
+}
+
+// =================================================
 // FA23 — SINGLE ENGINE TAKEOFF SPEED
 // =================================================
 
@@ -2347,6 +2378,111 @@ if (tireResult.valid) {
 
     $("tireSpeed").textContent =
         "PENDIENTE";
+}
+
+// =================================================
+// FA23 — INM. LANDING
+// =================================================
+
+const inmLandingElement =
+    $("inmLanding");
+
+if (inmLandingElement) {
+
+    const configuration =
+        aircraftConfigSelect
+            ? aircraftConfigSelect.value
+            : "";
+
+    let inmLanding = null;
+
+
+    // -------------------------------------------------
+    // CONFIGURACIONES BASE
+    // -------------------------------------------------
+
+    const standardConfigurations = [
+        "TIPS",
+        "TIPS VACIOS",
+        "TIPS + CL PYLON"
+    ];
+
+
+    // -------------------------------------------------
+    // CONFIGURACIONES CON SUU-20
+    // -------------------------------------------------
+
+    const suu20Configurations = [
+        "TIPS + SUU-20",
+        "TIPS + SUU-20 CON BE-6",
+        "TIPS + SUU-20 CON BE-11"
+    ];
+
+
+    // -------------------------------------------------
+    // CALCULAR
+    // -------------------------------------------------
+
+    if (
+        standardConfigurations.includes(
+            configuration
+        )
+    ) {
+
+        if (temperature < 25) {
+            inmLanding = 180;
+        }
+        else if (temperature < 35) {
+            inmLanding = 185;
+        }
+        else if (temperature < 45) {
+            inmLanding = 190;
+        }
+        else {
+            inmLanding = 195;
+        }
+
+    }
+
+    else if (
+        suu20Configurations.includes(
+            configuration
+        )
+    ) {
+
+        if (temperature < 25) {
+            inmLanding = 185;
+        }
+        else if (temperature < 35) {
+            inmLanding = 190;
+        }
+        else if (temperature < 45) {
+            inmLanding = 195;
+        }
+        else {
+            inmLanding = 200;
+        }
+
+    }
+
+
+    // -------------------------------------------------
+    // MOSTRAR
+    // -------------------------------------------------
+
+    if (inmLanding !== null) {
+
+        inmLandingElement.textContent =
+            `${inmLanding} KIAS`;
+
+    }
+    else {
+
+        inmLandingElement.textContent =
+            "No Calculada";
+
+    }
+
 }
 
 // =================================================
