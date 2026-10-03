@@ -733,7 +733,7 @@ function updateTakeoffModeUI() {
     if (mode === "FORMATION") {
 
         formationNozzleBox.style.display =
-            "block";
+            "flex";
 
         if (thrustBox) {
             thrustBox.style.display =
@@ -742,7 +742,7 @@ function updateTakeoffModeUI() {
 
         if (formationResultsSection) {
             formationResultsSection.style.display =
-                "block";
+                "flex";
         }
 
     }
@@ -753,7 +753,7 @@ function updateTakeoffModeUI() {
 
         if (thrustBox) {
             thrustBox.style.display =
-                "block";
+                "flex";
         }
 
         if (formationResultsSection) {
@@ -1646,7 +1646,7 @@ if (
     ) {
 
         formationTofBox.style.display =
-            "block";
+            "flex";
 
         if (
             formationTakeoffFactorResult.valid
@@ -5792,13 +5792,13 @@ function updateAccelerationModeUI() {
 
         // MOSTRAR CARTEL
         accelerationCartelBox.style.display =
-            "block";
+            "flex";
 
     } else {
 
         // MOSTRAR DISTANCIA
         accelerationDistanceBox.style.display =
-            "block";
+            "flex";
 
         // OCULTAR CARTEL
         accelerationCartelBox.style.display =
