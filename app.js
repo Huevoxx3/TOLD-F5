@@ -672,6 +672,7 @@ runwaySelect.value = "31";
 runwaySelect.dispatchEvent(
     new Event("change")
 );
+updateMETAR();
 // =====================================================
 // ATAJO PARA ELEMENTOS HTML
 // =====================================================
@@ -742,7 +743,7 @@ function updateTakeoffModeUI() {
 
         if (formationResultsSection) {
             formationResultsSection.style.display =
-                "flex";
+                "block";
         }
 
     }
