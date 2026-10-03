@@ -285,6 +285,8 @@ select:focus {
     color: #17202a;
 
     margin-top: 0;
+
+    border-color: #17202a;
 }
 
 
@@ -306,7 +308,7 @@ select:focus {
 .results-grid > div {
 
     border:
-        1px solid #e0e4e8;
+        1px solid #8c8e91;
 
     border-radius: 7px;
 

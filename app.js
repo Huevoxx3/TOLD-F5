@@ -698,6 +698,144 @@ const grossWeightInput =
 const cgInput =
     $("cg");
 
+// =====================================================
+// FA23 — MODO DE DESPEGUE
+// =====================================================
+
+const takeoffModeSelect =
+    $("takeoffMode");
+
+const formationNozzleBox =
+    $("formationNozzleBox");
+
+const thrustBox =
+    $("thrust")
+        ? $("thrust").closest(".input-group")
+        : null;
+
+
+function updateTakeoffModeUI() {
+
+    if (
+        !takeoffModeSelect ||
+        !formationNozzleBox
+    ) {
+        return;
+    }
+
+    const mode =
+        takeoffModeSelect.value;
+
+    const formationResultsSection =
+        $("formationResultsSection");
+
+
+    if (mode === "FORMATION") {
+
+        formationNozzleBox.style.display =
+            "block";
+
+        if (thrustBox) {
+            thrustBox.style.display =
+                "none";
+        }
+
+        if (formationResultsSection) {
+            formationResultsSection.style.display =
+                "block";
+        }
+
+    }
+    else {
+
+        formationNozzleBox.style.display =
+            "none";
+
+        if (thrustBox) {
+            thrustBox.style.display =
+                "block";
+        }
+
+        if (formationResultsSection) {
+            formationResultsSection.style.display =
+                "none";
+        }
+
+    }
+}
+
+
+// Cambio INDIVIDUAL / FORMACIÓN
+if (takeoffModeSelect) {
+
+    takeoffModeSelect.addEventListener(
+        "change",
+        function () {
+
+            updateTakeoffModeUI();
+
+            if (
+                takeoffModeSelect.value === "FORMATION" &&
+                formationNozzle
+            ) {
+
+                formationNozzle.value = 60;
+
+            }
+
+        }
+    );
+
+}
+
+
+// Estado inicial
+updateTakeoffModeUI();
+
+// =====================================================
+// FA23 — CONTROL DE NOZZLE
+// =====================================================
+
+const formationNozzle =
+    $("formationNozzle");
+
+if (formationNozzle) {
+
+    formationNozzle.addEventListener(
+        "change",
+        function () {
+
+            let value =
+                Number(
+                    formationNozzle.value
+                );
+
+            if (!Number.isFinite(value)) {
+
+                value = 60;
+
+            }
+
+            if (value < 50) {
+
+                value = 50;
+
+            }
+
+            if (value > 85) {
+
+                value = 85;
+
+            }
+
+            formationNozzle.value =
+                value;
+
+        }
+    );
+
+}
+
 
 // =====================================================
 // ACTUALIZAR PESO Y CG SEGÚN CONFIGURACIÓN
@@ -1335,18 +1473,143 @@ const antiIce =
         ? $("antiIce").value
         : "OFF";
 
-const takeoffFactorResult =
+// =================================================
+// FA23 — TAKEOFF FACTOR
+// CÁLCULO INDIVIDUAL + FORMACIÓN
+// =================================================
+
+// -------------------------------------------------
+// 1. TOF INDIVIDUAL
+// -------------------------------------------------
+
+const individualThrust =
+    takeoffModeSelect &&
+    takeoffModeSelect.value === "FORMATION"
+        ? "MAX"
+        : thrust;
+
+const takeoffFactorIndividualResult =
     FA23Digital.calculateTakeoffFactor(
         temperature,
         pa,
-        thrust,
+        individualThrust,
         antiIce
     );
 
+// -------------------------------------------------
+// 2. TOF FORMACIÓN
+// -------------------------------------------------
+
+const formationNozzleValue =
+    Number(
+        $("formationNozzle")
+            ? $("formationNozzle").value
+            : 60
+    );
+
+
+// TOF correspondiente a MIN AB
+const formationMinResult =
+    FA23Digital.calculateTakeoffFactor(
+        temperature,
+        pa,
+        "MIN_AB",
+        antiIce
+    );
+
+
+// TOF correspondiente a MAX
+const formationMaxResult =
+    FA23Digital.calculateTakeoffFactor(
+        temperature,
+        pa,
+        "MAX",
+        antiIce
+    );
+
+
+let formationTakeoffFactorResult = {
+    valid: false,
+    factor: null
+};
+
+
+if (
+    formationMinResult.valid &&
+    formationMaxResult.valid
+) {
+
+    const nozzle =
+        Math.min(
+            85,
+            Math.max(
+                50,
+                formationNozzleValue
+            )
+        );
+
+
+    // 50 % = MIN AB
+    // 85 % = MAX
+
+    const fraction =
+        (
+            nozzle - 50
+        ) /
+        (
+            85 - 50
+        );
+
+
+    const formationFactor =
+        formationMinResult.factor +
+        (
+            formationMaxResult.factor -
+            formationMinResult.factor
+        ) *
+        fraction;
+
+
+    formationTakeoffFactorResult = {
+
+        valid: true,
+
+        factor:
+            formationFactor
+
+    };
+
+}
+
+
+// -------------------------------------------------
+// DEBUG — MOSTRAR LOS DOS CÁLCULOS
+// -------------------------------------------------
+
 console.log(
-    "FA2-3 Takeoff Factor:",
-    takeoffFactorResult
+    "FA23 — TOF INDIVIDUAL:",
+    takeoffFactorIndividualResult
 );
+
+console.log(
+    "FA23 — TOF FORMACIÓN:",
+    formationTakeoffFactorResult
+);
+
+
+// -------------------------------------------------
+// COMPATIBILIDAD CON EL CÓDIGO ACTUAL
+// -------------------------------------------------
+//
+// Por ahora NO cambiamos ningún cálculo
+// posterior.
+//
+// El TOLD continúa utilizando el TOF
+// individual exactamente como hasta hoy.
+//
+
+const takeoffFactorResult =
+    takeoffFactorIndividualResult;
 
 // Mostrar FA2-3 en pantalla
 
@@ -1359,6 +1622,54 @@ if (takeoffFactorResult.valid) {
 
     $("takeoffFactor").textContent =
         "PENDIENTE";
+
+}
+
+// =================================================
+// FA23 — MOSTRAR TOF FORMACIÓN
+// =================================================
+
+const formationTofBox =
+    $("formationTofBox");
+
+const formationTakeoffFactorElement =
+    $("formationTakeoffFactor");
+
+if (
+    formationTofBox &&
+    formationTakeoffFactorElement
+) {
+
+    if (
+        takeoffModeSelect &&
+        takeoffModeSelect.value === "FORMATION"
+    ) {
+
+        formationTofBox.style.display =
+            "block";
+
+        if (
+            formationTakeoffFactorResult.valid
+        ) {
+
+            formationTakeoffFactorElement.textContent =
+                formationTakeoffFactorResult.factor
+                    .toFixed(1);
+
+        } else {
+
+            formationTakeoffFactorElement.textContent =
+                "PENDIENTE";
+
+        }
+
+    }
+    else {
+
+        formationTofBox.style.display =
+            "none";
+
+    }
 
 }
 
@@ -1607,6 +1918,32 @@ if (
 
 // =================================================
 // FA23 — TOGR
+// INDIVIDUAL + FORMACIÓN
+// =================================================
+
+// -------------------------------------------------
+// DETERMINAR VIENTO PARA TOGR
+// -------------------------------------------------
+
+let togrWindType = "calm";
+let togrWind = 0;
+
+if (wind.headwind > 0) {
+
+    togrWindType = "headwind";
+    togrWind = wind.headwind;
+
+}
+else if (wind.tailwind > 0) {
+
+    togrWindType = "tailwind";
+    togrWind = wind.tailwind;
+
+}
+
+
+// =================================================
+// TOGR INDIVIDUAL
 // =================================================
 
 const togrElement =
@@ -1620,23 +1957,6 @@ if (
 ) {
 
     try {
-
-        // Determinar tipo y valor de viento
-        let togrWindType = "calm";
-        let togrWind = 0;
-
-        if (wind.headwind > 0) {
-
-            togrWindType = "headwind";
-            togrWind = wind.headwind;
-
-        } else if (wind.tailwind > 0) {
-
-            togrWindType = "tailwind";
-            togrWind = wind.tailwind;
-
-        }
-
 
         const togrResult =
             window.FA23TOGR.calculate({
@@ -1665,7 +1985,8 @@ if (
                 togrResult.result.togrFt
                     .toFixed(0);
 
-        } else {
+        }
+        else {
 
             togrElement.textContent =
                 "PENDIENTE";
@@ -1677,7 +1998,8 @@ if (
 
         }
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "Error calculando TOGR:",
@@ -1689,7 +2011,8 @@ if (
 
     }
 
-} else {
+}
+else {
 
     if (togrElement) {
 
@@ -1701,6 +2024,87 @@ if (
 }
 
 
+// =================================================
+// TOGR FORMACIÓN
+// =================================================
+
+const formationTOGRElement =
+    $("formationTOGR");
+
+
+if (
+    formationTOGRElement &&
+    formationTakeoffFactorResult.valid &&
+    window.FA23TOGR &&
+    typeof window.FA23TOGR.calculate === "function"
+) {
+
+    try {
+
+        const formationTOGRResult =
+            window.FA23TOGR.calculate({
+
+                takeoffFactor:
+                    formationTakeoffFactorResult.factor,
+
+                grossWeight:
+                    grossWeight,
+
+                cg:
+                    cg,
+
+                windType:
+                    togrWindType,
+
+                wind:
+                    togrWind
+
+            });
+
+
+        if (formationTOGRResult.valid) {
+
+            formationTOGRElement.textContent =
+                formationTOGRResult.result.togrFt
+                    .toFixed(0);
+
+        }
+        else {
+
+            formationTOGRElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "TOGR FORMACIÓN:",
+                formationTOGRResult.message
+            );
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error calculando TOGR FORMACIÓN:",
+            error
+        );
+
+        formationTOGRElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
+else {
+
+    if (formationTOGRElement) {
+
+        formationTOGRElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
 // =================================================
 // FA23 — CRITICAL FIELD LENGTH
 // =================================================
@@ -1757,6 +2161,96 @@ if (cflResult.valid) {
     cflElement.textContent = 
         "PENDIENTE"; 
  
+}
+// =================================================
+// FA23 — CRITICAL FIELD LENGTH — FORMACIÓN
+// =================================================
+
+const formationCFLWithoutChuteElement =
+    $("formationCFLWithoutChute");
+
+
+if (
+    formationCFLWithoutChuteElement &&
+    formationTakeoffFactorResult.valid &&
+    typeof window.calculateFA23CFL === "function"
+) {
+
+    try {
+
+        const formationCFLResult =
+            window.calculateFA23CFL({
+
+                takeoffFactor:
+                    formationTakeoffFactorResult.factor,
+
+                grossWeight:
+                    grossWeight,
+
+                cg:
+                    cg,
+
+                headwind:
+                    Math.max(
+                        0,
+                        wind.headwind
+                    ),
+
+                tailwind:
+                    Math.max(
+                        0,
+                        wind.tailwind
+                    ),
+
+                rcr:
+                    rcr
+
+            });
+
+
+        if (formationCFLResult.valid) {
+
+            formationCFLWithoutChuteElement.textContent =
+                Math.round(
+                    formationCFLResult.result.cflFt
+                ).toLocaleString("es-ES");
+
+        }
+        else {
+
+            formationCFLWithoutChuteElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "CFL FORMACIÓN SIN PARACAÍDAS:",
+                formationCFLResult.message
+            );
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error calculando CFL FORMACIÓN SIN PARACAÍDAS:",
+            error
+        );
+
+        formationCFLWithoutChuteElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
+else {
+
+    if (formationCFLWithoutChuteElement) {
+
+        formationCFLWithoutChuteElement.textContent =
+            "PENDIENTE";
+
+    }
+
 }
 
 // =================================================
@@ -1844,6 +2338,98 @@ if (
     if (cflChuteElement) {
         cflChuteElement.textContent =
             "PENDIENTE";
+    }
+
+}
+
+// =================================================
+// FA23 — CRITICAL FIELD LENGTH — FORMACIÓN
+// WITH DRAG CHUTE
+// =================================================
+
+const formationCFLWithChuteElement =
+    $("formationCFLWithChute");
+
+
+if (
+    formationCFLWithChuteElement &&
+    formationTakeoffFactorResult.valid &&
+    typeof window.calculateFA23CFLDC === "function"
+) {
+
+    try {
+
+        const formationCFLChuteResult =
+            window.calculateFA23CFLDC({
+
+                takeoffFactor:
+                    formationTakeoffFactorResult.factor,
+
+                grossWeight:
+                    grossWeight,
+
+                cg:
+                    cg,
+
+                headwind:
+                    Math.max(
+                        0,
+                        wind.headwind
+                    ),
+
+                tailwind:
+                    Math.max(
+                        0,
+                        wind.tailwind
+                    ),
+
+                rcr:
+                    rcr
+
+            });
+
+
+        if (formationCFLChuteResult.valid) {
+
+            formationCFLWithChuteElement.textContent =
+                Math.round(
+                    formationCFLChuteResult.result.cflFt
+                ).toLocaleString("es-ES");
+
+        }
+        else {
+
+            formationCFLWithChuteElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "CFL FORMACIÓN CON PARACAÍDAS:",
+                formationCFLChuteResult.message
+            );
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error calculando CFL FORMACIÓN CON PARACAÍDAS:",
+            error
+        );
+
+        formationCFLWithChuteElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
+else {
+
+    if (formationCFLWithChuteElement) {
+
+        formationCFLWithChuteElement.textContent =
+            "PENDIENTE";
+
     }
 
 }
@@ -2045,6 +2631,329 @@ cefElement.classList.toggle(
 }
 
 updateMainRefusalCEF();
+
+// =================================================
+// FA23 — REHUSE FORMACIÓN — SIN PARACAÍDAS
+// =================================================
+
+async function updateFormationRefusalCEF() {
+
+    const refusalElement =
+        $("formationRehuseWithout");
+
+    if (!refusalElement) {
+        return;
+    }
+
+    if (!formationTakeoffFactorResult.valid) {
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+    const formationTOF =
+        Number(
+            formationTakeoffFactorResult.factor
+        );
+
+    const formationGW =
+        Number(grossWeight);
+
+    const formationRCR =
+        Number(rcr);
+
+
+    const aerodrome =
+        aerodromes[$("aerodrome").value];
+
+    const runway =
+        aerodrome.runways[$("runway").value];
+
+    const formationRunwayLength =
+        Number(runway.lengthFt);
+
+
+    const formationCFLText =
+        $("formationCFLWithoutChute")
+            ? $("formationCFLWithoutChute").textContent
+            : "";
+
+    const formationCFL =
+        Number(
+            formationCFLText
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+
+    if (
+        !Number.isFinite(formationTOF) ||
+        !Number.isFinite(formationGW) ||
+        !Number.isFinite(formationRCR) ||
+        !Number.isFinite(formationCFL)
+    ) {
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "data/FA23-CFL-Refusal-CEF-digitalizacion.json"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "No se pudo cargar la digitalización REFUSAL/CEF."
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const result =
+            window.FA23RefusalCEF.calculate(
+                data,
+                {
+
+                    tof:
+                        formationTOF,
+
+                    grossWeight:
+                        formationGW,
+
+                    cflFt:
+                        formationCFL,
+
+                    rcr:
+                        formationRCR,
+
+                    runwayLengthFt:
+                        formationRunwayLength
+
+                }
+            );
+
+
+        if (!result.valid) {
+
+            refusalElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "REHUSE FORMACIÓN SIN PARACAÍDAS:",
+                result.message
+            );
+
+            return;
+        }
+
+
+        refusalElement.textContent =
+            result.result.refusalDisplay;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error calculando REHUSE FORMACIÓN SIN PARACAÍDAS:",
+            error
+        );
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
+
+updateFormationRefusalCEF();
+
+// =================================================
+// FA23 — REHUSE FORMACIÓN — CON PARACAÍDAS
+// =================================================
+
+async function updateFormationRefusalChute() {
+
+    const refusalElement =
+        $("formationRehuseWith");
+
+    if (!refusalElement) {
+        return;
+    }
+
+    if (!formationTakeoffFactorResult.valid) {
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+    const formationTOF =
+        Number(
+            formationTakeoffFactorResult.factor
+        );
+
+    const formationGW =
+        Number(grossWeight);
+
+    const formationRCR =
+        Number(rcr);
+
+
+    const aerodrome =
+        aerodromes[$("aerodrome").value];
+
+    const runway =
+        aerodrome.runways[$("runway").value];
+
+    const formationRunwayLength =
+        Number(runway.lengthFt);
+
+
+    // -------------------------------------------------
+    // CFL FORMACIÓN CON PARACAÍDAS
+    // -------------------------------------------------
+
+    const formationCFLText =
+        $("formationCFLWithChute")
+            ? $("formationCFLWithChute").textContent
+            : "";
+
+    const formationCFL =
+        Number(
+            formationCFLText
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+
+    // -------------------------------------------------
+    // VALIDACIÓN
+    // -------------------------------------------------
+
+    if (
+        !Number.isFinite(formationTOF) ||
+        !Number.isFinite(formationGW) ||
+        !Number.isFinite(formationRCR) ||
+        !Number.isFinite(formationCFL) ||
+        !Number.isFinite(formationRunwayLength)
+    ) {
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // CARGAR DIGITALIZACIÓN CHUTE
+    // -------------------------------------------------
+
+    try {
+
+        const response =
+            await fetch(
+                "refusal-cef/FA23_Refusal_Chute_Digitalizacion.json"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "No se pudo cargar la digitalización REFUSAL CHUTE."
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        // -------------------------------------------------
+        // CALCULAR REHUSE FORMACIÓN CON PARACAÍDAS
+        // -------------------------------------------------
+
+        const result =
+            window.FA23RefusalChute.calculate(
+                data,
+                {
+
+                    tof:
+                        formationTOF,
+
+                    grossWeight:
+                        formationGW,
+
+                    cflFt:
+                        formationCFL,
+
+                    rcr:
+                        formationRCR,
+
+                    runwayLengthFt:
+                        formationRunwayLength
+
+                }
+            );
+
+
+        if (!result.valid) {
+
+            refusalElement.textContent =
+                "PENDIENTE";
+
+            console.warn(
+                "REHUSE FORMACIÓN CON PARACAÍDAS:",
+                result.message
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // MOSTRAR RESULTADO
+        // -------------------------------------------------
+
+        refusalElement.textContent =
+            result.result.refusalDisplay;
+
+
+        console.log(
+            "REHUSE FORMACIÓN CON PARACAÍDAS:",
+            result.result.refusalDisplay
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error calculando REHUSE FORMACIÓN CON PARACAÍDAS:",
+            error
+        );
+
+        refusalElement.textContent =
+            "PENDIENTE";
+
+    }
+
+}
+
+updateFormationRefusalChute();
 
 // =================================================
 // FA23 — REFUSAL SPEED / CEF — CHUTE
@@ -3326,6 +4235,17 @@ const statusElement = $("status");
 
 if (statusElement) {
     statusElement.className = "status info";
+}
+
+// -------------------------------------------------
+// CONTROL DE ACELERACIÓN — FORMACIÓN
+// -------------------------------------------------
+
+if (
+    takeoffModeSelect &&
+    takeoffModeSelect.value === "FORMATION"
+) {
+    calculateFormationAccelerationControl();
 }
 
 }
@@ -4641,6 +5561,200 @@ controlDistanceElement.textContent =
 }
 
 // =================================================
+// FA23 — CONTROL DE ACELERACIÓN — FORMACIÓN
+// =================================================
+
+function calculateFormationAccelerationControl() {
+
+    const resultElement =
+        $("formationAcceleration");
+
+    const controlDistanceElement =
+        $("accelerationControlDistance");
+
+    if (
+        !resultElement ||
+        !controlDistanceElement
+    ) {
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // OBTENER LONGITUD DE PISTA
+    // -------------------------------------------------
+
+    const aerodrome =
+        aerodromes[
+            $("aerodrome").value
+        ];
+
+    if (!aerodrome) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    const runway =
+        aerodrome.runways[
+            $("runway").value
+        ];
+
+    if (!runway) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    const runwayLength =
+        Number(runway.lengthFt);
+
+
+    // -------------------------------------------------
+    // OBTENER DISTANCIA DE CONTROL
+    // -------------------------------------------------
+
+    const controlDistanceFt =
+        Number(
+            controlDistanceElement.textContent
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+
+    if (
+        !Number.isFinite(
+            controlDistanceFt
+        )
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // TAKEOFF SPEED
+    // -------------------------------------------------
+
+    const takeoffSpeedElement =
+        $("takeoffSpeed");
+
+
+    const togrElement =
+        $("formationTOGR");
+
+
+    if (
+        !takeoffSpeedElement ||
+        !togrElement
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    const takeoffSpeed =
+        Number.parseFloat(
+            takeoffSpeedElement.textContent
+                .replace(",", ".")
+        );
+
+
+    const togrFt =
+        Number.parseFloat(
+            togrElement.textContent
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+
+    if (
+        !Number.isFinite(
+            takeoffSpeed
+        ) ||
+        !Number.isFinite(
+            togrFt
+        )
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // MOTOR DE ACELERACIÓN
+    // -------------------------------------------------
+
+    if (
+        typeof window.calculateFA23Acceleration !==
+        "function"
+    ) {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        console.error(
+            "No se encontró calculateFA23Acceleration."
+        );
+
+        return;
+    }
+
+
+    const accelerationResult =
+        window.calculateFA23Acceleration({
+
+            takeoffSpeed:
+                takeoffSpeed,
+
+            takeoffDistanceFt:
+                togrFt,
+
+            controlDistanceFt:
+                controlDistanceFt
+
+        });
+
+
+    if (
+        accelerationResult.valid
+    ) {
+
+        resultElement.textContent =
+            accelerationResult.result.speed
+                .toFixed(1);
+
+    }
+    else {
+
+        resultElement.textContent =
+            "PENDIENTE";
+
+        console.warn(
+            "Aceleración Formación:",
+            accelerationResult.message
+        );
+
+    }
+
+}
+
+// =================================================
 // FA23 — SELECTOR DISTANCIA / CARTEL
 // =================================================
 
@@ -4746,3 +5860,10 @@ if (accelerationMode) {
 updateAccelerationModeUI();
 
 calculateAccelerationControl();
+
+if (
+    takeoffModeSelect &&
+    takeoffModeSelect.value === "FORMATION"
+) {
+    calculateFormationAccelerationControl();
+}

@@ -445,7 +445,61 @@
 
 </label>
 
+<!-- ================================================= -->
+<!-- MODO DE DESPEGUE -->
+<!-- ================================================= -->
 
+<div class="input-group">
+
+    <label for="takeoffMode">
+        Modo de despegue
+    </label>
+
+    <select id="takeoffMode">
+
+        <option value="INDIVIDUAL" selected>
+            INDIVIDUAL
+        </option>
+
+        <option value="FORMATION">
+            FORMACIÓN
+        </option>
+
+    </select>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- NOZZLE — SOLO FORMACIÓN -->
+<!-- ================================================= -->
+
+<div
+    class="input-group"
+    id="formationNozzleBox"
+    style="display:none;"
+>
+
+    <label for="formationNozzle">
+        Nozzle
+    </label>
+
+    <div class="input-unit">
+
+        <input
+            id="formationNozzle"
+            type="number"
+            min="50"
+            max="85"
+            step="1"
+            value="60"
+        >
+
+        <span>%</span>
+
+    </div>
+
+</div>
             <div class="input-group">
 
                 <label for="thrust">
@@ -589,6 +643,53 @@
 
 <br>
 
+    <!-- ================================================= -->
+<!-- RESULTADOS — DESPEGUE EN FORMACIÓN -->
+<!-- ================================================= -->
+
+<section 
+    id="formationResultsSection" 
+    class="card" 
+    style="display:none; background:#cdebf1; border:1px solid #010902;" 
+>
+
+    <h3>DATOS DE DESPEGUE EN FORMACIÓN</h3>
+
+    <div class="results-grid performance">
+
+        <div>
+            <span>Control de Aceleración</span>
+            <strong id="formationAcceleration">—</strong>
+        </div>
+
+        <div>
+            <span>TOGR</span>
+            <strong id="formationTOGR">—</strong>
+        </div>
+
+        <div>
+            <span>REHUSE CON</span>
+            <strong id="formationRehuseWith">—</strong>
+        </div>
+
+        <div>
+            <span>REHUSE SIN</span>
+            <strong id="formationRehuseWithout">—</strong>
+        </div>
+
+        <div>
+            <span>CFL SIN PARACAÍDAS</span>
+            <strong id="formationCFLWithoutChute">—</strong>
+        </div>
+
+        <div>
+            <span>CFL CON PARACAÍDAS</span>
+            <strong id="formationCFLWithChute">—</strong>
+        </div>
+
+    </div>
+
+</section>
     <!-- ===================================================== -->
     <!-- 4) TAKEOFF PERFORMANCE -->
     <!-- ===================================================== -->
@@ -605,11 +706,19 @@
         <!-- TAKEOFF FACTOR -->
         <!-- ================================================= -->
 
-      <div class="results-grid performance">
+<div class="results-grid performance">
 
     <div>
         <span>Takeoff Factor</span>
         <strong id="takeoffFactor">—</strong>
+    </div>
+
+    <div
+        id="formationTofBox"
+        style="display:none;"
+    >
+        <span>TOF (FORMACIÓN)</span>
+        <strong id="formationTakeoffFactor">—</strong>
     </div>
 
     <div>
@@ -777,11 +886,10 @@
 
         </div>
 
-
-
-        
-
     </section>
+
+
+
 
     <!-- ===================================================== -->
     <!-- 5) TABLAS / RECORRIDOS -->
