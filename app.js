@@ -346,6 +346,19 @@ const aerodromeICAO = {
 
 const AVWX_API_KEY = "SYybZksTKoBvX_zwxGfEV1PYOtstVhCVgysShs-_Vg4";
 
+// Campos meteorológicos modificados manualmente
+const metarManual = {
+    temperature: false,
+    qnh: false,
+    windDirection: false,
+    windSpeed: false
+};
+
+Object.keys(metarManual).forEach(id => {
+    $(id).addEventListener("input", () => {
+        metarManual[id] = true;
+    });
+});
 
 async function updateMETAR() {
 
@@ -404,6 +417,37 @@ async function updateMETAR() {
             data?.raw ||
             "METAR no disponible";
 
+            // ---------------------------------------------
+// CARGAR VALORES DEL METAR EN LOS CAMPOS WX
+// ---------------------------------------------
+
+const valoresMETAR = {
+    temperature: data?.temperature?.value,
+    qnh: data?.altimeter?.value,
+    windDirection: data?.wind_direction?.value,
+    windSpeed: data?.wind_speed?.value
+};
+
+let actualizarCalculo = false;
+
+Object.entries(valoresMETAR).forEach(([id, valor]) => {
+    const campo = $(id);
+
+    if (
+        campo &&
+        !metarManual[id] &&
+        valor !== null &&
+        valor !== undefined &&
+        Number.isFinite(Number(valor))
+    ) {
+        campo.value = Number(valor);
+        actualizarCalculo = true;
+    }
+});
+
+if (actualizarCalculo) {
+    calculate();
+}
 
 // ---------------------------------------------
 // ANTIGÜEDAD DEL METAR
@@ -607,6 +651,10 @@ updateRunwayCondition();
 aerodromeSelect.addEventListener(
     "change",
     function () {
+
+        Object.keys(metarManual).forEach(id => {
+    metarManual[id] = false;
+});
 
         const aerodrome =
             aerodromes[
