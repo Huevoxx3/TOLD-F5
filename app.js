@@ -1266,11 +1266,130 @@ function displayFA22(result) {
 
 
 // =====================================================
+// RESUMEN COMPARATIVO — INDIVIDUAL / FORMACIÓN
+// =====================================================
+
+function updateToldSummary() {
+
+
+const getText = (id) => {
+    const element = document.getElementById(id);
+    if (!element) return "—";
+
+    const value = (element.textContent || "").trim();
+
+    if (!value || value === "—") return "—";
+
+    return value
+        .replace(/\s*KIAS\b/gi, "")
+        .replace(/\s*ft\b/gi, "")
+        .trim()
+        .split(" / ")
+        .map(part => {
+   const numero = Number(part.replace(",", "."));
+
+            if (!part || !Number.isFinite(numero)) {
+                return part;
+            }
+
+            return Math.round(numero).toString();
+        })
+        .join(" / ");
+};
+
+
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value || "—";
+    };
+
+    const configSelect = document.getElementById("aircraftConfig");
+    const config = configSelect && configSelect.selectedOptions.length
+        ? configSelect.selectedOptions[0].textContent.trim()
+        : "—";
+    const temperature = document.getElementById("temperature");
+    const configTemp = `${config} / ${temperature ? temperature.value : "—"}°C`;
+
+    ["summaryConfigIndividual", "summaryConfigFormation"].forEach(id => setText(id, configTemp));
+
+    // Velocidades y aceleración
+    setText("summaryAccIndividual", getText("accelerationSpeed"));
+    setText("summaryAccFormation", getText("formationAcceleration"));
+
+    // CEFS: una sola columna compacta con los dos resultados existentes (SIN / CON paracaídas).
+    const cefIndividualSin = getText("criticalEngineFailureSpeed");
+    const cefIndividualCon = getText("criticalEngineFailureSpeedChute");
+    setText("summaryCEFSIndividual", `${cefIndividualSin} / ${cefIndividualCon}`);
+
+const cefFormationCell = document.getElementById("summaryCEFSFormation");
+if (cefFormationCell) {
+    const cefSin = cefFormationCell.dataset.cefsWithout || "—";
+    const cefCon = cefFormationCell.dataset.cefsWith || "—";
+
+    const redondear = (valor) => {
+        const numero = Number(valor.replace(",", "."));
+        return valor !== "—" && Number.isFinite(numero)
+            ? Math.round(numero).toString()
+            : valor;
+    };
+
+    cefFormationCell.textContent =
+        `${redondear(cefSin)} / ${redondear(cefCon)}`;
+}
+
+    setText("summaryRefusalWithoutIndividual", getText("refusalSpeed"));
+    setText("summaryRefusalWithIndividual", getText("refusalSpeedChute"));
+    setText("summaryRefusalWithoutFormation", getText("formationRehuseWithout"));
+    setText("summaryRefusalWithFormation", getText("formationRehuseWith"));
+
+    // Parámetros comunes a ambos modos: se muestran en ambas filas para facilitar la comparación.
+    const commonValues = [
+        ["summaryTOIndividual", "takeoffSpeed"],
+        ["summaryTOFormation", "takeoffSpeed"],
+        ["summarySETOSIndividual", "setos"],
+        ["summarySETOSFormation", "setos"],
+        ["summaryObstacleIndividual", "obstacleSpeed"],
+        ["summaryObstacleFormation", "obstacleSpeed"],
+        ["summaryINMIndividual", "inmLanding"],
+        ["summaryINMFormation", "inmLanding"],
+        ["summaryTRIMIndividual", "trimSet"],
+        ["summaryTRIMFormation", "trimSet"]
+    ];
+
+    commonValues.forEach(([targetId, sourceId]) => {
+        setText(targetId, getText(sourceId));
+    });
+}
+
+function observeToldSummaryResults() {
+    if (typeof MutationObserver === "undefined") return;
+
+    const sourceIds = [
+        "accelerationSpeed", "formationAcceleration",
+        "criticalEngineFailureSpeed", "criticalEngineFailureSpeedChute",
+        "refusalSpeed", "refusalSpeedChute",
+        "formationRehuseWithout", "formationRehuseWith",
+        "takeoffSpeed", "setos", "obstacleSpeed", "inmLanding", "trimSet"
+    ];
+
+    const observer = new MutationObserver(() => updateToldSummary());
+    sourceIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) observer.observe(element, { childList: true, characterData: true, subtree: true });
+    });
+}
+
+// =====================================================
 // CALCULO PRINCIPAL
 // =====================================================
 
 function calculate() {
 
+    const summaryCEFSFormation = $("summaryCEFSFormation");
+    if (summaryCEFSFormation) {
+        summaryCEFSFormation.dataset.cefsWithout = "—";
+        summaryCEFSFormation.dataset.cefsWith = "—";
+    }
 
     // -------------------------------------------------
     // AERÓDROMO
@@ -2764,6 +2883,12 @@ async function updateFormationRefusalCEF() {
         refusalElement.textContent =
             result.result.refusalDisplay;
 
+        const summaryCEFS = $("summaryCEFSFormation");
+        if (summaryCEFS) {
+            summaryCEFS.dataset.cefsWithout = String(result.result.cefDisplay ?? "—").replace(/\s*KIAS\b/gi, "").trim();
+            updateToldSummary();
+        }
+
     }
     catch (error) {
 
@@ -2933,6 +3058,11 @@ async function updateFormationRefusalChute() {
         refusalElement.textContent =
             result.result.refusalDisplay;
 
+        const summaryCEFS = $("summaryCEFSFormation");
+        if (summaryCEFS) {
+            summaryCEFS.dataset.cefsWith = String(result.result.cefDisplay ?? "—").replace(/\s*KIAS\b/gi, "").trim();
+            updateToldSummary();
+        }
 
         console.log(
             "REHUSE FORMACIÓN CON PARACAÍDAS:",
@@ -4249,6 +4379,8 @@ if (
     calculateFormationAccelerationControl();
 }
 
+updateToldSummary();
+
 }
 
 // =====================================================
@@ -4266,6 +4398,8 @@ $("calculateBtn")
 // ARRANQUE
 // =====================================================
 
+observeToldSummaryResults();
+updateToldSummary();
 calculate();
 
 // =====================================================

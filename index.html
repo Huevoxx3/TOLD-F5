@@ -8,6 +8,55 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="refusal-cef/FA23_Refusal_Chute_CSS.css">
+
+    <style>
+        /* Resumen compacto comparativo Individual / Formación */
+        .told-summary {
+            margin: 10px 0 16px;
+            padding: 10px;
+        }
+        .told-summary h3 {
+            margin: 0 0 8px;
+            font-size: 14px;
+        }
+        .told-summary-scroll {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .told-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+        .told-summary-table th,
+        .told-summary-table td {
+            padding: 7px 6px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+        }
+        .told-summary-table thead th {
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .told-summary-table tbody th {
+            text-align: left;
+            background: #f1f5f9;
+        }
+        .told-summary-table tbody td {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        .told-summary-table .formation-summary-row th,
+        .told-summary-table .formation-summary-row td {
+            background: #dceff5;
+        }
+        @media (max-width: 900px) {
+            .told-summary-table { min-width: 850px; }
+        }
+    </style>
+
 </head>
 
 <body>
@@ -457,11 +506,11 @@
 
     <select id="takeoffMode">
 
-        <option value="INDIVIDUAL" selected>
+        <option value="INDIVIDUAL">
             INDIVIDUAL
         </option>
 
-        <option value="FORMATION">
+        <option value="FORMATION" selected>
             FORMACIÓN
         </option>
 
@@ -641,8 +690,70 @@
     </button>
 
 
-<br>
 
+<!-- =====================================================
+     RESUMEN COMPARATIVO — INDIVIDUAL / FORMACIÓN
+     ===================================================== -->
+
+<section id="toldSummary" class="card told-summary">
+
+    <h3>RESUMEN DE PERFORMANCE</h3>
+
+    <div class="told-summary-scroll">
+        <table class="told-summary-table">
+
+            <thead>
+                <tr>
+                    <th>MODO</th>
+                    <th>CONFIG / TEMP</th>
+                    <th>ACC</th>
+                    <th title="CEFS sin / con paracaídas">CEFS</th>
+                    <th>REHUSE SIN</th>
+                    <th>REHUSE CON</th>
+                    <th>T/O</th>
+                    <th>SETOS</th>
+                    <th>OBSTACLE</th>
+                    <th>INM</th>
+                    <th>TRIM</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <th>INDIVIDUAL</th>
+                    <td id="summaryConfigIndividual">—</td>
+                    <td id="summaryAccIndividual">—</td>
+                    <td id="summaryCEFSIndividual">—</td>
+                    <td id="summaryRefusalWithoutIndividual">—</td>
+                    <td id="summaryRefusalWithIndividual">—</td>
+                    <td id="summaryTOIndividual">—</td>
+                    <td id="summarySETOSIndividual">—</td>
+                    <td id="summaryObstacleIndividual">—</td>
+                    <td id="summaryINMIndividual">—</td>
+                    <td id="summaryTRIMIndividual">—</td>
+                </tr>
+
+                <tr class="formation-summary-row">
+                    <th>FORMACIÓN</th>
+                    <td id="summaryConfigFormation">—</td>
+                    <td id="summaryAccFormation">—</td>
+                    <td id="summaryCEFSFormation">—</td>
+                    <td id="summaryRefusalWithoutFormation">—</td>
+                    <td id="summaryRefusalWithFormation">—</td>
+                    <td id="summaryTOFormation">—</td>
+                    <td id="summarySETOSFormation">—</td>
+                    <td id="summaryObstacleFormation">—</td>
+                    <td id="summaryINMFormation">—</td>
+                    <td id="summaryTRIMFormation">—</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+</section>
+
+<br>
     <!-- ================================================= -->
 <!-- RESULTADOS — DESPEGUE EN FORMACIÓN -->
 <!-- ================================================= -->
