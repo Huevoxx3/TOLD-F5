@@ -1105,15 +1105,12 @@ function pressureAltitude(
     Más adelante verificaremos exactamente el
     procedimiento que queremos utilizar para el TOLD.
     */
-
-    return (
-
-        elevationFt
-        +
-        (1013.25 - Number(qnhHpa))
-        * 27
-
+    const pa = (
+        elevationFt +
+        (1013.25 - Number(qnhHpa)) * 27
     );
+
+    return Math.max(0, pa);
 
 }
 
